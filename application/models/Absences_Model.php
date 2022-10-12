@@ -2,13 +2,12 @@
 class Absences_Model extends CI_Model
 {   
     protected $fillable_columns = [
-        "activity_code",
-        "unit_id",
-        "source_fund_id",
-        "location_id",
-        "month",
-        "year",
-        "total_amount",
+        "code_activity",
+        "kind_of_meeting",
+        "start_date",
+        "end_date",
+        "meeting_link",
+        "valid_until",
         "created_by",
     ];
 
@@ -17,30 +16,16 @@ class Absences_Model extends CI_Model
     }
 
     function insert_absences($payload) {
-        $r_data = array_intersect_key($payload, array_flip($this->fillable_columns));
+        $abs_data = array_intersect_key($payload, array_flip($this->fillable_columns));
         $this->db->trans_start();
-        $this->db->insert('m_reimbursement', $r_data);
-        $reimbursement_id =  $this->db->insert_id();
-
-        $item_id = $payload['item_id'];
-        for($x=0;$x < count($item_id);$x++) {
-            $this->db->insert('m_reimbursement_items', [
-                'reimbursement_id' => $reimbursement_id,
-                'item_id' => $payload['item_id'][$x],
-                'amount' => $payload['amount'][$x],
-                'file' => $payload['file'][$x],
-            ]);
-        }
-
-        $this->db->insert('m_reimbursement_status', [
-            'reimbursement_id' => $reimbursement_id,
-            'supervisor_id' => $payload['supervisor_id'],
-            'budget_reviewer_id' => $payload['budget_reviewer_id'],
-        ]);
-
+        $valid_date = $payload['valid_date'];
+        $valid_time = $payload['valid_time'];
+        $abs_data['valid_until'] = date("$valid_date $valid_time");
+        $this->db->insert('absences', $abs_data);
+        $absence_id =  $this->db->insert_id();
         $this->db->trans_complete();
         if($this->db->trans_status()) {
-            return $reimbursement_id;
+            return $absence_id;
         }
         return false;
 

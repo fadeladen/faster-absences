@@ -21,8 +21,7 @@
 							<!--begin::Card body-->
 							<div class="card-body pt-0 mt-5">
 								<!--begin::Table-->
-								<table id="table" class="table gy-4"
-									data-url="<?= base_url('absences/datatable') ?>">
+								<table id="table" class="table gy-4" data-url="<?= base_url('absences/datatable') ?>">
 									<!--begin::Table head-->
 									<thead>
 										<tr class="text-start fw-bolder fs-7 text-uppercase bg-lighten">
@@ -32,8 +31,8 @@
 											<th>Activity</th>
 											<th class="action-col">Action</th>
 										</tr>
-									<!--end::Table head-->
-									<!--begin::Table body-->
+										<!--end::Table head-->
+										<!--begin::Table body-->
 									<tbody class="text-gray-600">
 
 									</tbody>
@@ -50,7 +49,7 @@
 		</div>
 	</div>
 	<script>
-		initDatatable('#table', {
+		const table = initDatatable('#table', {
 			order: [
 				[0, 'desc']
 			],
@@ -67,13 +66,13 @@
 	                   </div>
 	                `
 				}
-			},{
+			}, {
 				targets: 'requestor',
 				orderable: false,
 				searchable: true,
 				render: function (data, _, row) {
 					let avatar = ''
-					if(row[7] == null) {
+					if (row[7] == null) {
 						avatar = base_url + 'assets/images/no-avatar.png'
 					} else {
 						const asset_token = "<?= $_ENV['ASSETS_TOKEN']; ?>"
@@ -122,29 +121,64 @@
 					$('#myModal').html(html)
 					$('#myModal').modal('show')
 				});
-				$(document).on('click', '.btn-copy-link', function (e) {
-					var $temp = $("<input>");
-					$("body").append($temp);
-					const link = base_url + 'site/absences/' + $(this).attr('data-id')
-					$(this).select();
-					navigator.clipboard.writeText(link);
-					showToast('Copied', 'Absence link copied to clipboard', 'success')
-				})
-
-				$(document).on('change', '#kind_of_meeting', function (e) {
-					const value = $(this).val()
-					if(value == 1) {
-						$('.online-hybrid').removeClass('d-none')
-						$('.qrcode').addClass('d-none')
-					} else if(value == 2) {
-						$('.qrcode').removeClass('d-none')
-						$('.online-hybrid').addClass('d-none')
-					} else if(value == 3) {
-						$('.qrcode').removeClass('d-none')
-						$('.online-hybrid').removeClass('d-none')
+			initFormAjax('#absence-form', {
+				error: function (xhr) {
+					const response = xhr.responseJSON;
+					if (response.errors) {
+						for (const err in response.errors) {
+							const $parent = $(`#${err.replace("[]", "")}`).parent();
+							$(`#${err.replace("[]", "")}`).addClass("is-invalid");
+							if ($parent.find("invalid-feeedback").length == 0) {
+								$parent.append(
+									`<div class="invalid-feedback">${response.errors[err]}</div>`
+								);
+							}
+						}
 					}
-				})
-				
+					Swal.fire({
+						"title": "Something went wrong!",
+						"text": response.message,
+						"icon": "error",
+						"confirmButtonColor": '#000'
+					});
+				},
+				success: function (data) {
+					Swal.fire({
+						"title": "Saved!",
+						"text": data.message,
+						"icon": "success",
+						"confirmButtonColor": '#000'
+					}).then((result) => {
+						if (result.value) {
+							// $('#myModal').modal('hide')
+						}
+						table.draw()
+					})
+				},
+			})
+			$(document).on('click', '.btn-copy-link', function (e) {
+				var $temp = $("<input>");
+				$("body").append($temp);
+				const link = base_url + 'site/absences/' + $(this).attr('data-id')
+				$(this).select();
+				navigator.clipboard.writeText(link);
+				showToast('Copied', 'Absence link copied to clipboard', 'success')
+			})
+
+			$(document).on('change', '#kind_of_meeting', function (e) {
+				const value = $(this).val()
+				if (value == 1) {
+					$('.online-hybrid').removeClass('d-none')
+					$('.qrcode').addClass('d-none')
+				} else if (value == 2) {
+					$('.qrcode').removeClass('d-none')
+					$('.online-hybrid').addClass('d-none')
+				} else if (value == 3) {
+					$('.qrcode').removeClass('d-none')
+					$('.online-hybrid').removeClass('d-none')
+				}
+			})
+
 		})
 
 	</script>

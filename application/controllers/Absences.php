@@ -44,4 +44,36 @@ class Absences extends MY_Controller {
         echo $this->datatable->generate();
     }
 
+    public function store() {
+		$this->form_validation->set_rules('start_date', 'Start date', 'required');
+		$this->form_validation->set_rules('end_date', 'End date', 'required');
+		$this->form_validation->set_rules('kind_of_meeting', 'Kind of meeting', 'required');
+		$kind_of_meeting = $this->input->post('kind_of_meeting');
+		if($kind_of_meeting == '1' || $kind_of_meeting == '3') {
+			$this->form_validation->set_rules('meeting_link', 'Meeting link', 'required');
+			$this->form_validation->set_rules('valid_date', 'Valid date', 'required');
+			$this->form_validation->set_rules('valid_time', 'Valid time', 'required');
+		}
+
+		if ($this->form_validation->run()) {
+			$payload = $this->input->post();
+            $payload['created_by'] = $this->user_data->userId;
+            $saved = $this->absences->insert_absences($payload);
+            if($saved) {
+                $response['payload'] = $payload;
+                $response['message'] = 'Absence has been created!';
+                $status_code = 200;
+            } else {
+                $response['errors'] = $this->form_validation->error_array();
+			    $response['message'] = 'Something wrong, please try again later!';
+			    $status_code = 400;
+            }
+		} else {
+			$response['errors'] = $this->form_validation->error_array();
+			$response['message'] = 'Please fill all required fields';
+			$status_code = 422;
+		}
+		$this->send_json($response, $status_code);
+	}
+
 }

@@ -39,19 +39,12 @@ export function initFormAjax(selector, ajaxConfig = {}) {
 			},
 			error: function (xhr) {
 				const response = xhr.responseJSON;
-				if (showValidation && response.errors) {
+				if (response.errors) {
 					for (const err in response.errors) {
 						const $parent = $(`#${err.replace("[]", "")}`).parent();
-						const $arr_parent = $(`.${err.replace("[]", "")}`).parent();
 						$(`#${err.replace("[]", "")}`).addClass("is-invalid");
-						$(`.${err.replace("[]", "")}`).addClass("is-invalid");
 						if ($parent.find("invalid-feeedback").length == 0) {
 							$parent.append(
-								`<div class="invalid-feedback">${response.errors[err]}</div>`
-							);
-						}
-						if ($arr_parent.find("invalid-feeedback").length == 0) {
-							$arr_parent.append(
 								`<div class="invalid-feedback">${response.errors[err]}</div>`
 							);
 						}

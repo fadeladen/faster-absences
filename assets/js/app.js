@@ -45100,19 +45100,13 @@ function initFormAjax(selector) {
       error: function error(xhr) {
         var response = xhr.responseJSON;
 
-        if (showValidation && response.errors) {
+        if (response.errors) {
           for (var err in response.errors) {
             var $parent = $("#".concat(err.replace("[]", ""))).parent();
-            var $arr_parent = $(".".concat(err.replace("[]", ""))).parent();
             $("#".concat(err.replace("[]", ""))).addClass("is-invalid");
-            $(".".concat(err.replace("[]", ""))).addClass("is-invalid");
 
             if ($parent.find("invalid-feeedback").length == 0) {
               $parent.append("<div class=\"invalid-feedback\">".concat(response.errors[err], "</div>"));
-            }
-
-            if ($arr_parent.find("invalid-feeedback").length == 0) {
-              $arr_parent.append("<div class=\"invalid-feedback\">".concat(response.errors[err], "</div>"));
             }
           }
         }
