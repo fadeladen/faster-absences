@@ -1,0 +1,49 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+@import "variables.scss";
+@import "~bootstrap/scss/bootstrap";
+@import "select2";
+@import "~select2-bootstrap-5-theme/src/include-all";
+@import "~datatables.net-bs5/css/dataTables.bootstrap5.min.css";
+
+.form-control, .form-select {
+    font-size: 1rem !important;
+}
+
+.btn-status {
+    padding: 0.4rem 0.6rem !important;
+    font-size: 0.7rem !important;
+}
+
+.btn-status i {
+    font-size: 0.7rem !important;
+}
+
+.btn-xs {
+    padding: 0.5rem 0.7rem !important;
+    font-size: 0.8rem !important;
+}
+
+.btn-xs i {
+    font-size: 0.8rem !important;
+}
+
+.dataTable  tbody td:first-child, table tbody td:first-child {
+    padding-left: 0.75rem !important;
+}
+
+table {
+    // border-collapse: none !important;
+    border-spacing: 0 !important;
+}
+
+.table td, .table th, .table tr {
+    border-color: rgb(239, 242, 245) !important;
+}
+
+table thead tr {
+    background-color: rgba(245,248,250,.5) !important;
+}
+
+table thead tr th {
+    padding: 1rem 0.75rem !important;
+}
