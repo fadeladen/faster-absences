@@ -65,6 +65,20 @@
 
 			toast.show()
 		}
+		$(document).on("focus, change", ".is-invalid", function (e) {
+			$(e.target)
+				.parent()
+				.children("div.invalid-feedback")
+				.remove();
+			$(e.target)
+				.parent()
+				.children("p.error")
+				.remove();
+			$(e.target).removeClass("is-invalid");
+			$(e.target).parent().find('.select2-selection').removeClass(
+				'is-invalid')
+		});
+
 	</script>
 	<script src="<?= base_url('assets/theme/plugins/global/plugins.bundle.js') ?>"></script>
 	<script src="<?= base_url('assets/theme/js/scripts.bundle.js') ?>"></script>

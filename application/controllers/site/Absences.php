@@ -20,16 +20,47 @@ class Absences extends MY_Controller {
 		}
 	}
 
-	public function save_absence() {
+	public function store() {
 		if ($this->input->is_ajax_request() and $this->input->server('REQUEST_METHOD') === 'POST') {
-			$this->form_validation->set_rules('nama_peserta', 'Nama Peserta', 'required');
-        	$this->form_validation->set_rules('jenis_kelamin', 'Jenis Kelamin', 'required');
+			$this->form_validation->set_rules('nama_peserta', 'Nama peserta', 'required');
+        	$this->form_validation->set_rules('jenis_kelamin', 'Jenis kelamin', 'required');
             $this->form_validation->set_rules('asal_layanan', 'Instansi/organisasi', 'required');
             $this->form_validation->set_rules('nama_lembaga', 'Nama lembaga', 'required');
-            $this->form_validation->set_rules('phone_number', 'No HP/WA', 'required');
-            $this->form_validation->set_rules('email_peserta', 'Email Peserta', 'required');
-            $this->form_validation->set_rules('proses_reimbursement', 'Proses Reimburesement', 'callback_validate_proses_reimbursement');
-            $this->form_validation->set_rules('jumlah_reimburesment', 'Jumlah Reimburesment', 'required');
+            $this->form_validation->set_rules('phone_number', 'No HP/WhatsApp', 'required');
+            $this->form_validation->set_rules('email_peserta', 'Email peserta', 'required');
+            $this->form_validation->set_rules('jumlah_konsumsi', 'Jumlah konsumsi', 'required');
+            $this->form_validation->set_rules('jumlah_internet', 'Jumlah internet', 'required');
+            $this->form_validation->set_rules('resi_konsumsi', 'Resi konsumsi', 'required');
+            $this->form_validation->set_rules('reimbursement_type', 'Proses reimbursement', 'required');
+			$this->form_validation->set_message('required', '{field} harus diisi.');
+			$type = $this->input->post('reimbursement_type');
+			if($type == '1') {
+				$this->form_validation->set_rules('ovo_number', 'Nomor OVO', 'required');
+			} else if($type == '2') {
+				$this->form_validation->set_rules('gopay_number', 'Nomor GOPAY', 'required');
+			} else if($type == '3') {
+				$this->form_validation->set_rules('bank_name', 'Nama BANK', 'required');
+				$this->form_validation->set_rules('bank_number', 'Nomor rekening', 'required');
+			}
+			if ($this->form_validation->run()) {
+				$payload = $this->input->post();
+				$payload['created_by'] = $this->user_data->userId;
+				$saved = $this->absences->insert_attendance($payload);
+				if($saved) {
+					$response['payload'] = $payload;
+					$response['message'] = 'Data berhasil disimpan!';
+					$status_code = 200;
+				} else {
+					$response['errors'] = $this->form_validation->error_array();
+					$response['message'] = 'Maaf ada gangguan, silahkan coba kembali!';
+					$status_code = 400;
+				}
+			} else {
+				$response['errors'] = $this->form_validation->error_array();
+				$response['message'] = 'Mohon isi semua data wajib!';
+				$status_code = 422;
+			}
+			$this->send_json($response, $status_code);
 		} else {
 			show_404();
 		}

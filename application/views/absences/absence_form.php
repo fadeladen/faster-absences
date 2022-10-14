@@ -1,10 +1,13 @@
-<div style="background-color: #1e1e2d; padding-top: 5rem; padding-bottom: 13rem;" class="d-flex px-5">
+<div style="background-color: #1e1e2d; padding-top: 3rem; padding-bottom: 13rem;" class="d-flex flex-column px-5">
+	<div class="d-flex justify-content-center align-items-center mb-5 pb-3">
+		<img style="width: 15rem; height: auto;" src="<?= base_url('assets/images/logos/faster_v2.png') ?>" alt="">
+	</div>
 	<div class="shadow-sm mx-auto rounded bg-white py-5 px-3 m col-xl-7">
 		<div class="text-center pb-3 mb-2 border-bottom">
-			<h1 class="mb-5">Formulir absensi dan konsumsi</h1>
-			<h4><?= $detail['activity'] ?></h4>
+			<h3 class="mb-5">Formulir absensi dan konsumsi</h3>
+			<h1><?= $detail['activity'] ?></h1>
 		</div>
-		<div class="pb-3 mb-5 border-bottom">
+		<div class="pb-3 px-5 mb-2 border-bottom">
 			<p>Bapak/Ibu yang mengikuti kegiatan ini dapat melakukan reimbursement makan siang dengan
 				mengisi form reimbursement berikut dengan lengkap..</p>
 
@@ -32,47 +35,123 @@
 				<br />Terima kasih
 			</p>
 		</div>
-		<form method="POST" action="<?= base_url('site/consultant_registration/store') ?>" id="registration-form">
+		<form method="POST" action="<?= base_url('site/absences/store/') . $detail['absence_id'] ?>"
+			id="attendance-form">
 			<input class="d-none" type="text" value="<?= $detail['code_activity'] ?>" name="code_activity"
 				id="code_activity">
-			<input class="d-none" type="text" value="<?= $detail['absence_id'] ?>" name="absence_id"
-				id="request_number">
 			<div class="modal-body">
 				<div class="row">
-					<div class="form-group col-md-6 mb-3">
-						<label for="name">Name of consultant</label>
-						<input placeholder="Enter name" type="text" class="form-control" name="name" id="name">
+					<div class="form-group col-12 mb-3">
+						<label class="fw-bolder" for="nama_peserta">Nama peserta</label>
+						<input placeholder="Masukkan nama" type="text" class="form-control mt-2" name="nama_peserta"
+							id="nama_peserta">
 					</div>
-					<div class="form-group col-md-6 mb-3">
-						<label for="email">Email</label>
-						<input placeholder="Enter email" type="text" class="form-control" name="email" id="email">
+					<div class="form-group col-12 mb-3">
+						<label class="fw-bolder" for="jenis_kelamin">Jenis kelamin</label>
+						<br>
+						<div id="jenis_kelamin">
+							<div class="form-check form-check-inline mt-4">
+								<input class="form-check-input" type="radio" name="jenis_kelamin" id="inlineRadio1"
+									value="1">
+								<label class="form-check-label" for="inlineRadio1">Laki-laki</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="jenis_kelamin" id="inlineRadio2"
+									value="2">
+								<label class="form-check-label" for="inlineRadio2">Perempuan</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="jenis_kelamin" id="inlineRadio3"
+									value="3">
+								<label class="form-check-label" for="inlineRadio3">Transgender</label>
+							</div>
+						</div>
 					</div>
-					<div class="form-group col-md-6 mb-3">
-						<label for="address">Home address</label>
-						<input placeholder="Enter address" type="text" class="form-control" name="address" id="address">
+					<div class="form-group col-12 mb-3">
+						<label class="fw-bolder">Instansi/Organisasi</label>
+						<select name="asal_layanan" id="asal_layanan" class="form-select mt-2">
+							<option value="">Pilih instansi/organisasi</option>
+							<option value="Layanan Kesehatan">Layanan Kesehatan</option>
+							<option value="CSO/LSM">CSO/LSM</option>
+							<option value="Instansi Pemerintah">Instansi Pemerintah</option>
+							<option value="Kementrian/Lembaga">Kementrian/Lembaga</option>
+							<option value="Donor">Donor</option>
+							<option value="epic">EpiC (Staff / Konsultan)</option>
+							<option value="Lainnya">Lainnya</option>
+						</select>
 					</div>
-					<div class="form-group col-md-6 mb-3">
-						<label for="phone_number">Phone/Mobile number</label>
-						<input placeholder="Enter phone number" type="text" class="form-control" name="phone_number"
+					<div class="form-group col-12 mb-3">
+						<label class="fw-bolder" for="nama_lembaga">Nama lembaga</label>
+						<textarea placeholder="Masukkan nama lembaga" type="text" class="form-control mt-2"
+							name="nama_lembaga" id="nama_lembaga"></textarea>
+					</div>
+					<div class="form-group col-12 mb-3">
+						<label class="fw-bolder" for="phone_number">No HP/WhatsApp</label>
+						<input placeholder="Masukkan no hp" type="text" class="form-control" name="phone_number"
 							id="phone_number">
 					</div>
-					<div class="form-group col-md-6 mb-3">
-						<label for="cover_letter">Upload cover letter</label>
-						<input type="file" class="form-control" name="cover_letter_file" id="cover_letter_file">
-						<input type="text" class="form-control field-value d-none" name="cover_letter"
-							id="cover_letter">
-						<small class="my-2 upload-notif"></small>
+					<div class="form-group col-12 mb-3">
+						<label class="fw-bolder" for="email">Email</label>
+						<input placeholder="Masukkan email" type="text" class="form-control" name="email_peserta"
+							id="email_peserta">
 					</div>
-					<div class="form-group col-md-6 mb-3">
-						<label for="cv">Upload CV/Resume</label>
-						<input type="file" class="form-control" name="cv_file" id="cv_file">
-						<input type="text" class="form-control field-value d-none" name="cv" id="cv">
-						<small class="my-2 upload-notif"></small>
+					<div class="form-group col-12 mb-3">
+						<label class="fw-bolder">Tujuan pengisian absensi</label> <br>
+						<div class="form-check mt-3 mb-3">
+							<input class="form-check-input" value="1" type="radio" name="tujuan_pengisian" id="flexRadioDefault1">
+							<label class="form-check-label" for="flexRadioDefault1">
+								Hanya mengisi absensi tanpa participant cost
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" value="2" type="radio" name="tujuan_pengisian" id="flexRadioDefault2">
+							<label class="form-check-label" for="flexRadioDefault2">
+								Mengisi absensi dengan participant cost
+							</label>
+						</div>
 					</div>
-					<div class="form-group col-md-6 mb-3">
-						<label for="daily_rate">Daily rate expexted</label>
-						<input placeholder="Enter daily rate" type="text" class="form-control" name="daily_rate"
-							id="daily_rate">
+					<div class="form-group col-12 mb-3">
+					    <label id="reimbursement_type" class="fw-bolder">Proses reimbursement</label> <br>
+                        <div class="form-check mt-3 mb-3">
+							<input class="form-check-input" value="1" type="radio" name="reimbursement_type" id="flexRadioDefault1">
+							<label class="form-check-label" for="flexRadioDefault1">
+								OVO
+							</label>
+						</div>
+                        <div class="ovo-field mb-2 ps-5 ms-4">
+                            <input placeholder="Masukkan nomor OVO" type="text" class="form-control" name="ovo_number" id="ovo_number">
+                        </div>
+						<div class="form-check mt-3">
+							<input class="form-check-input" value="2" type="radio" name="reimbursement_type" id="flexRadioDefault2">
+							<label class="form-check-label" for="flexRadioDefault2">
+								GOPAY
+							</label>
+						</div>
+                        <div class="gopay-field mb-2 ps-5 ms-4">
+                            <input placeholder="Masukkan nomor GOPAY" type="text" class="form-control" name="gopay_number" id="gopay_number">
+                        </div>
+						<div class="form-check mt-3">
+							<input class="form-check-input" value="3" type="radio" name="reimbursement_type" id="flexRadioDefault3">
+							<label class="form-check-label" for="flexRadioDefault3">
+								BANK
+							</label>
+						</div>
+                        <div class="bank-field mb-2 ps-5 form-group ms-4">
+                            <div class="mb-2">
+                                <input placeholder="Masukkan nama BANK" type="text" class="form-control" name="bank_name" id="bank_name">
+                            </div>
+                            <div class="mb-2">
+                                <label>Nomor rekening </label>
+                                <input placeholder="Masukkan nomor rekening" type="text" class="form-control" name="bank_number" id="bank_number">
+                            </div>
+                        </div>
+					</div>
+					<div class="form-group col-12 mb-3">
+						<label for="cover_letter">Upload resi konsumsi</label>
+						<input type="file" class="form-control" name="resi_file" id="resi_file">
+						<input type="text" class="form-control field-value d-none" name="resi_konsumsi"
+							id="resi_konsumsi">
+						<small class="my-2 upload-notif"></small>
 					</div>
 					<div class="d-grid gap-2">
 						<button class="btn btn-primary" type="submit">Submit</button>
@@ -80,23 +159,27 @@
 				</div>
 			</div>
 		</form>
+		<div class="text-center fw-bolder text-muted fs-7 my-3">
+			faster.bantuanteknis.id
+		</div>
 	</div>
 </div>
 
 <script>
 	$(document).ready(function () {
-		$('#lodging, #').number(true, 0, '', '.');
+		$('#meals, #internet').number(true, 0, '', '.')
+		$('#asal_layanan').select2()
 		const asset_url = "<?= $_ENV['ASSETS_URL'] ?>"
 		const loader = `<div style="width: 5rem; height: 5rem;" class="spinner-border mb-5" role="status"></div>
-				<h5 class="mt-2">Please wait</h5>
-				<p>Saving data...</p>`;
-
-		$("#reimbursement_receipt").on("change", function () {
+				<h5 class="mt-2">Mohon tunggu</h5>
+				<p>Menyimpan data...</p>`;
+        
+		$("#resi_file").on("change", function () {
 			var $this = $(this);
 			var form = new FormData();
 			form.append("file", $this[0].files[0]);
 			$.ajax({
-				url: asset_url + 'reimbursement_receipt',
+				url: asset_url + 'resi_konsumsi',
 				type: "POST",
 				data: form,
 				cache: false,
@@ -105,12 +188,13 @@
 				dataType: 'json',
 				beforeSend: function (request) {
 					request.setRequestHeader("token", "<?= $_ENV['ASSETS_TOKEN'] ?>");
-					$this.parent().find('.upload-notif').text('Uploading ..., please wait!')
+					$this.parent().find('.upload-notif').text(
+						'Mengupload file ..., mohon tunggu!')
 				},
 				error: function (xhr) {
 					const response = xhr.responseJSON;
 					console.log(response)
-					$this.parent().find('.upload-notif').text('Failed to upload file!')
+					$this.parent().find('.upload-notif').text('Gagal mengupload file!')
 						.addClass('text-danger')
 					$this.val(null);
 					$this.parent().find('.field-value').val('')
@@ -119,19 +203,19 @@
 					if (response.status === true) {
 						const filename = response.data.filename
 						$this.parent().find('.field-value').val(filename)
-						$this.parent().find('.upload-notif').text('File has been uploaded!')
+						$this.parent().find('.upload-notif').text('File berhasil di upload!')
 							.addClass('text-success')
 					} else {
 						$this.parent().find('.field-value').val('')
 						$this.val(null);
-						$this.parent().find('.upload-notif').text('Failed to upload file!')
+						$this.parent().find('.upload-notif').text('Failed berhasil di upload!')
 							.addClass('text-danger')
 					}
 				},
 			});
 		})
 
-		initFormAjax('#registration-form', {
+		initFormAjax('#attendance-form', {
 			beforeSend: function () {
 				$(".form-control").removeClass("is-invalid")
 				$('.upload-notif').text('').removeClass('text-danger')
@@ -162,15 +246,15 @@
 					}
 				}
 				Swal.fire({
-					"title": response.message,
-					"text": '',
+					"title": 'Gagal!',
+					"text": response.message,
 					"icon": "error",
 					"confirmButtonColor": '#000',
 				});
 			},
 			success: function (data) {
 				Swal.fire({
-					"title": "Saved!",
+					"title": "Berhasil!",
 					"text": data.message,
 					"icon": "success",
 					"confirmButtonClass": "btn btn-primary"
