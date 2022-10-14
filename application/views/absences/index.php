@@ -13,7 +13,16 @@
 									<span class="text-muted mt-1 fw-bold fs-7"></span>
 								</h3>
 								<div class="card-toolbar">
-
+									<a class="btn btn-primary" href="<?= base_url('absences/data') ?>">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+											fill="currentColor" class="bi bi-list-ul" viewBox="0 0 16 16">
+											<path fill-rule="evenodd"
+												d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+										</svg>
+										<span class="ms-1">
+											Data Absences
+										</span>
+									</a>
 								</div>
 							</div>
 
@@ -99,18 +108,16 @@
 								</div>
 							</div>`
 				}
-			}, {
-				targets: 'action-col',
-				orderable: false,
-				searchable: false,
-				render: function (data) {
-					return `
-	                   <div class="d-flex align-items-center"> 
-					        <button data-id="${data}" class="btn btn-sm btn-primary btn-create">Attendant List</button>
-	                   </div>
-	                `
-				}
 			}]
+		})
+
+		$(document).on('click', '.btn-copy-link', function (e) {
+				var $temp = $("<input>");
+				$("body").append($temp);
+				const link = base_url + 'site/absences/form/' + $(this).attr('data-id')
+				$(this).select();
+				navigator.clipboard.writeText(link);
+				showToast('Copied', 'Absence link copied to clipboard', 'success')
 		})
 
 		$(document).on('click', '.btn-create', function (e) {
@@ -150,20 +157,20 @@
 						"confirmButtonColor": '#000'
 					}).then((result) => {
 						if (result.value) {
-							// $('#myModal').modal('hide')
+							$('#myModal').modal('hide')
 						}
 						table.draw()
 					})
 				},
 			})
-			$(document).on('click', '.btn-copy-link', function (e) {
-				var $temp = $("<input>");
-				$("body").append($temp);
-				const link = base_url + 'site/absences/' + $(this).attr('data-id')
-				$(this).select();
-				navigator.clipboard.writeText(link);
-				showToast('Copied', 'Absence link copied to clipboard', 'success')
-			})
+			// $(document).on('click', '.btn-copy-link', function (e) {
+			// 	var $temp = $("<input>");
+			// 	$("body").append($temp);
+			// 	const link = base_url + 'site/absences/form/' + $(this).attr('data-id')
+			// 	$(this).select();
+			// 	navigator.clipboard.writeText(link);
+			// 	showToast('Copied', 'Absence link copied to clipboard', 'success')
+			// })
 
 			$(document).on('change', '#kind_of_meeting', function (e) {
 				const value = $(this).val()

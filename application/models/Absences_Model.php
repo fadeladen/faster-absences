@@ -11,8 +11,10 @@ class Absences_Model extends CI_Model
         "created_by",
     ];
 
-    function get_absences_by_activity_code($activity_code) {
-        return $this->db->select('b.activity, a.*')->from('absences');
+    function get_absences_by_activity_code($code_activity) {
+        return $this->db->select('dm.activity, a.id as absence_id, a.*')->from('absences a')
+        ->join('tb_detail_monthly dm', 'dm.kode_kegiatan = a.code_activity')
+        ->where('code_activity', $code_activity)->get()->row_array();
     }
 
     function insert_absences($payload) {

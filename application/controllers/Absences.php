@@ -20,6 +20,11 @@ class Absences extends MY_Controller {
         $this->template->render('absences/index');
 	}
 
+    public function data() {
+		$this->template->set('page', 'Internet, local transport & fee');
+        $this->template->render('absences/data');
+	}
+
     public function create() {
         if ($this->input->is_ajax_request()) {
 			$data['activity_code'] = $this->input->get('activity_code');
@@ -29,15 +34,32 @@ class Absences extends MY_Controller {
 		}
     }
 
+    public function absences_datatable()
+    {	
+        $this->datatable->select('pn.advance_number, dm.activity,dm.kode_kegiatan as participant_receipt, dm.kode_kegiatan as local_transport,
+        dm.kode_kegiatan as internet, dm.kode_kegiatan as download, dm.kode_kegiatan as action');
+        $this->datatable->from('tb_mini_proposal_new pn');
+        $this->datatable->join('absences abs', 'abs.code_activity = pn.code_activity');
+        $this->datatable->join('tb_userapp u', 'u.id = pn.create_by');
+        $this->datatable->join('tb_units un', 'u.unit_id = un.id');
+        $this->datatable->join('tb_detail_monthly dm', 'dm.kode_kegiatan = pn.code_activity');
+        $this->datatable->where('pn.status_finance', '1');
+        // $this->datatable->where_in('pn.direct_fund_code', $program_assistance_df_number);
+        // $this->datatable->where("dm.year = '".date('Y')."' and (dm.month IN('" . date('n') . "','" . (date('n') + 1) . "') OR dm.month_postponse IN('" . date('n') . "','" . (date('n') + 1) . "') )");
+
+        echo $this->datatable->generate();
+    }
+
 	public function datatable()
     {	
-        $this->datatable->select('pn.advance_number, u.username, DATE_FORMAT(pn.tor_approve_date, "%d %M %Y"), dm.activity, dm.kode_kegiatan as id, pn.tor_number,
+        $this->datatable->select('pn.advance_number, u.username, DATE_FORMAT(pn.tor_approve_date, "%d %M %Y"), dm.activity, dm.kode_kegiatan as action, pn.tor_number,
         dm.kode_kegiatan, u.avatar, u.purpose, un.unit_name');
         $this->datatable->from('tb_mini_proposal_new pn');
         $this->datatable->join('tb_userapp u', 'u.id = pn.create_by');
         $this->datatable->join('tb_units un', 'u.unit_id = un.id');
         $this->datatable->join('tb_detail_monthly dm', 'dm.kode_kegiatan = pn.code_activity');
         $this->datatable->where('pn.status_finance', '1');
+        $this->datatable->edit_column('action', '$1', 'absence_action_btn(action)');
         // $this->datatable->where_in('pn.direct_fund_code', $program_assistance_df_number);
         // $this->datatable->where("dm.year = '".date('Y')."' and (dm.month IN('" . date('n') . "','" . (date('n') + 1) . "') OR dm.month_postponse IN('" . date('n') . "','" . (date('n') + 1) . "') )");
 
