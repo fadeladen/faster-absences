@@ -12,9 +12,10 @@ class Absences_Model extends CI_Model
     ];
 
     function get_absences_by_activity_code($code_activity) {
-        return $this->db->select('dm.activity, a.id as absence_id, a.*')->from('absences a')
+        return $this->db->select('dm.activity, mp.advance_number, a.id as absence_id, a.*')->from('absences a')
         ->join('tb_detail_monthly dm', 'dm.kode_kegiatan = a.code_activity')
-        ->where('code_activity', $code_activity)->get()->row_array();
+        ->join('tb_mini_proposal_new mp', 'a.code_activity = mp.code_activity')
+        ->where('a.code_activity', $code_activity)->get()->row_array();
     }
 
     function insert_absences($payload) {
@@ -31,5 +32,29 @@ class Absences_Model extends CI_Model
         }
         return false;
 
+    }
+
+    function insert_attendance($payload) {
+        $this->db->insert('tb_event_absence', $payload);
+        $attendance_id =  $this->db->insert_id();
+        return $attendance_id;
+    }
+
+    function update_participant_data($id, $payload) {
+        $this->db->where('id', $id);
+        $updated = $this->db->update('tb_event_absence', [
+            $payload['field'] => $payload['value']
+        ]);
+        if($updated) {
+            return $this->get_participant_data_by_id($id);
+        }
+        return false;
+    }
+
+    function get_participant_data_by_id($id) {
+        return $this->db->select('format(jumlah_konsumsi, 0, "de_DE") as jumlah_konsumsi, format(jumlah_internet, 0, "de_DE") as internet_fee,
+        format(jumlah_other, 0, "de_DE") as other_fee, format(jumlah_konsumsi+jumlah_internet+jumlah_other, 0, "de_DE")  as total, resi_konsumsi, transfer_receipt')
+        ->from('tb_event_absence')
+        ->where('id', $id)->get()->row_array();
     }
 }

@@ -47,3 +47,18 @@ table thead tr {
 table thead tr th {
     padding: 1rem 0.75rem !important;
 }
+
+table.dataTable {
+    border-collapse: collapse !important;
+}
+
+.modal-xl {
+    width: 1350px !important;
+    max-width: 1350px !important;
+}
+
+.small-input {
+    font-size: 12px !important;
+    padding: 8px !important;
+    width: 70px !important;
+}

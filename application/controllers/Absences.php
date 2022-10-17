@@ -66,6 +66,22 @@ class Absences extends MY_Controller {
         echo $this->datatable->generate();
     }
 
+    public function participants_datatable($code_activity)
+    {
+        $this->datatable->select('nama_peserta, (
+            CASE 
+                WHEN jenis_kelamin = "1" THEN "Male"
+                WHEN jenis_kelamin = "2" THEN "Female"
+                ELSE "Transgender"
+            END) AS jenis_kelamin, asal_layanan,email_peserta,
+        reimbursement_type, format(jumlah_konsumsi, 0, "de_DE") as jumlah_konsumsi, format(jumlah_internet, 0, "de_DE") as internet_fee,
+        format(jumlah_other, 0, "de_DE") as other_fee, format(jumlah_konsumsi+jumlah_internet+jumlah_other, 0, "de_DE")  as total, 
+        resi_konsumsi, ovo_number, gopay_number, bank_name, bank_number, transfer_receipt, phone_number, nama_lembaga, id');
+        $this->datatable->from('tb_event_absence');
+        $this->datatable->where('code_activity', $code_activity);
+        echo $this->datatable->generate();
+    }
+
     public function store() {
 		$this->form_validation->set_rules('start_date', 'Start date', 'required');
 		$this->form_validation->set_rules('end_date', 'End date', 'required');
@@ -97,5 +113,41 @@ class Absences extends MY_Controller {
 		}
 		$this->send_json($response, $status_code);
 	}
+
+    public function update_participant($id) {
+
+        if ($this->input->is_ajax_request()) {
+            $payload = $this->input->post();
+            $data = $this->absences->update_participant_data($id, $payload);
+            if($data) {
+                $response['data'] = $data;
+                $response['message'] = 'Absence has been created!';
+                $status_code = 200;
+            } else {
+                $response['errors'] = $this->form_validation->error_array();
+                $response['message'] = 'Something wrong, please try again later!';
+                $status_code = 400;
+            }
+            $this->send_json($response, $status_code);
+        } else {
+            show_404();
+        }
+		
+	}
+
+    public function participants($code_activity) {
+        $this->template->set('page', 'Participants list');
+            $data['detail'] = $this->absences->get_absences_by_activity_code($code_activity);
+            $this->template->render('absences/participants', $data);
+    }
+
+    public function participants_modal() {
+        if ($this->input->is_ajax_request()) {
+            $data['code_activity'] = $this->input->get('code_activity');
+            $this->load->view('absences/participants_modal', $data);
+        } else {
+            show_404();
+        }
+    }
 
 }
