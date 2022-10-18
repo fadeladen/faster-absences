@@ -263,10 +263,14 @@
 					targets: 'action-col',
 					orderable: false,
 					searchable: false,
-					render: function (data) {
+					render: function (data, _, row) {
+						let disabled = ''
+						if(row[19] == 1 || row[15] == null || row[10] == null || !row[10 || !row[15]]) {
+							disabled = 'disabled'
+						}
 						return `
 							   <div style="width: 60px !important;" class="d-flex align-items-center"> 
-									<button data-id="${data}" class="btn btn-xs btn-primary btn-send-email">Submit</button>
+									<button ${disabled} data-id="${row[18]}" class="btn btn-xs btn-primary btn-send-email">Submit</button>
 							   </div>
 							`
 					}
@@ -361,6 +365,7 @@
 									'Receipt has been uploaded!')
 								.addClass('text-success')
 							$this.parent().addClass('d-none')
+							$this.parent().parent().parent().parent().find('.btn-send-email').attr('disabled', false)
 							const receiptContainer = $this.parent().parent().find(
 								'.transfer-receipt-container')
 							receiptContainer.removeClass('d-none')
@@ -442,24 +447,54 @@
 			$(document).on("click", '.btn-send-email', function () {
 				const $this = $(this)
 				const id = $(this).attr('data-id')
-				$.ajax({
-					type: 'POST',
-					url: base_url + 'absences/send_email_to_participant/' + id,
-					data: {
-						value,
-						field
-					},
-					error: function (xhr) {
-						const response = xhr.responseJSON;
-						console.log(response)
-					},
-					success: function (response) {
-						if (response.success) {
-							$this.parent().parent().find('.total-input').val(response.data.total)
-							updateTotalField()
-						}
-					},
-				});
+				const loader = `<div style="width: 5rem; height: 5rem;" class="spinner-border mb-5" role="status"></div>
+				<h5 class="mt-2">Please wait</h5>
+				<p>Sending email to participant...</p>	`
+				Swal.fire({
+					title: `Send email to participant?`,
+					text: "",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonColor: '#009EF7',
+					cancelButtonColor: '#F1416C',
+					confirmButtonText: `Yes!`
+				}).then((result) => {
+					if (result.value) {
+						$.ajax({
+							type: 'POST',
+							url: base_url + 'absences/submit_participant_reimbursement/' + id,
+							beforeSend: function () {
+								Swal.fire({
+									html: loader,
+									showConfirmButton: false,
+									allowEscapeKey: false,
+									allowOutsideClick: false,
+								});
+							},
+							error: function (xhr) {
+								const response = xhr.responseJSON;
+								Swal.fire({
+									"title": response.message,
+									"text": '',
+									"icon": "error",
+									"confirmButtonColor": '#000',
+								});
+							},
+							success: function (response) {
+								Swal.fire({
+									"title": "Success!",
+									"text": response.message,
+									"icon": "success",
+									"confirmButtonColor": '#000',
+								}).then((result) => {
+									if (result.value) {
+										participantsTable.draw(false)
+									}
+								})
+							},
+						});
+					}
+				})
 			})
 		})
 

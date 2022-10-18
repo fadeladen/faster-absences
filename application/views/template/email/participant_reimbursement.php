@@ -418,8 +418,13 @@
 											<div class="button-container">
 												<div>
 													<a class="btn btn-docs"
+														href="<?= $_ENV['ASSETS_URL'] . $detail['resi_konsumsi'] ?>?subfolder=resi_konsumsi&token=<?= $_ENV['ASSETS_TOKEN'] ?>"
+														target="_blank">CONSUMPTION RECEIPT</a>
+												</div>
+												<div>
+													<a class="btn btn-docs"
 														href="<?= $_ENV['ASSETS_URL'] . $detail['transfer_receipt'] ?>?subfolder=transfer_receipt&token=<?= $_ENV['ASSETS_TOKEN'] ?>"
-														target="_blank">DOWNLOAD RECEIPT</a>
+														target="_blank">TRANSFER RECEIPT</a>
 												</div>
 											</div>
 											<br>

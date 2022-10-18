@@ -78,7 +78,7 @@ class Absences extends MY_Controller {
             END) AS jenis_kelamin, asal_layanan,email_peserta,
         payment_method, format(jumlah_konsumsi, 0, "de_DE") as jumlah_konsumsi, format(jumlah_internet, 0, "de_DE") as internet_fee,
         format(jumlah_other, 0, "de_DE") as other_fee, format(jumlah_konsumsi+jumlah_internet+jumlah_other, 0, "de_DE")  as total, 
-        resi_konsumsi, ovo_number, gopay_number, bank_name, bank_number, transfer_receipt, phone_number, nama_lembaga, id as input');
+        resi_konsumsi, ovo_number, gopay_number, bank_name, bank_number, transfer_receipt, phone_number, nama_lembaga, id as input, is_email_send');
         $this->datatable->from('tb_event_absence');
         $this->datatable->where('code_activity', $code_activity);
         echo $this->datatable->generate();
@@ -176,7 +176,31 @@ class Absences extends MY_Controller {
         }
     }
 
-    public function send_email_to_participant($participant_id) {
+    public function submit_participant_reimbursement($participant_id) {
+        if ($this->input->is_ajax_request()) {
+            $updated = $this->db->where('id', $participant_id)->update('tb_event_absence', ['is_email_send' => 1]);
+            if($updated) {
+                $sent = $this->send_email_to_participant($participant_id);
+                if($sent) {
+                    $response['message'] = 'Email has been sent to participant!';
+                    $status_code = 200;
+                } else {
+                    $this->db->where('id', $participant_id)->update('tb_event_absence', ['is_email_send' => 0]);
+                    $response['message'] = 'Failed to sending email, please check your connection and try again!';
+                    $status_code = 400;
+                }
+            } else {
+                $this->db->where('id', $participant_id)->update('tb_event_absence', ['is_email_send' => 0]);
+                $response['message'] = 'Something went wrong, please try again later!';
+                $status_code = 400;
+            }
+            $this->send_json($response, $status_code);
+        } else {
+            show_404();
+        }
+    }
+
+    private function send_email_to_participant($participant_id) {
         $this->load->library('Phpmailer_library');
         $mail = $this->phpmailer_library->load();
         $mail->isSMTP();
@@ -194,15 +218,13 @@ class Absences extends MY_Controller {
                 WHEN e.payment_method = "1" THEN "OVO"
                 WHEN e.payment_method = "2" THEN "GOPAY"
                 ELSE "Bank"
-            END) AS payment_method, e.bank_name, e.transfer_receipt')
+            END) AS payment_method, e.bank_name, e.transfer_receipt, e.resi_konsumsi')
         ->from('tb_event_absence e')
         ->join('absences a', 'a.code_activity = e.code_activity')
         ->join('tb_detail_monthly dm', 'dm.kode_kegiatan = e.code_activity')
         ->where('e.id', $participant_id)
         ->get()->row_array();
         $data['detail'] = $detail;
-
-        // $this->load->view('template/email/participant_reimbursement', $data);
         $text = $this->load->view('template/email/participant_reimbursement', $data, true);
         $mail->setFrom('no-reply@faster.bantuanteknis.id', 'FASTER-FHI360');
         $mail->addAddress($detail['email_peserta']);
