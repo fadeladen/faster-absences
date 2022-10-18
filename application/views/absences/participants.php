@@ -30,6 +30,8 @@
 									<span class="card-label fw-bolder fs-3 mb-1">Participants list
 										(<?= $detail['advance_number'] ?>)</span>
 									<span class="text-muted mt-1 fw-bold fs-7"><?= $detail['activity'] ?></span>
+									<input type="text" class="d-none" value="<?= $detail['code_activity'] ?>"
+										id="code_activity">
 								</h3>
 								<div class="card-toolbar">
 									<a class="btn btn-primary" href="<?= base_url('absences/data') ?>">
@@ -77,17 +79,17 @@
 									<tfoot>
 										<tr style="padding-right: 2rem">
 											<td colspan="5" style="text-align: right;">Total :</td>
-											<td class="total text-danger text-center">
-												150.000
+											<td id="total_meal" class="text-danger text-center">
+
 											</td>
-											<td class="total_internet text-danger text-center">
-												250.000
+											<td id="total_internet" class="text-danger text-center">
+
 											</td>
-											<td class="total_other text-danger text-center">
-												50.000
+											<td id="total_other" class="text-danger text-center">
+
 											</td>
-											<td class="grand_total text-danger text-center">
-												450.000
+											<td id="total_all" class="text-danger text-center">
+
 											</td>
 										</tr>
 									</tfoot>
@@ -110,24 +112,45 @@
 				[0, 'desc']
 			],
 			columnDefs: [{
-					targets: ['email-col'],
+					targets: [0, 1, 3],
 					render: function (data, _, row) {
-						return `<div style="width: 80px !important;">${data}</div>`
+						return `<div style="width: 80px !important; font-size: 12px;">${data}</div>`
 					}
 				}, {
 					targets: ['organization-col'],
 					render: function (data, _, row) {
-						return `<div style="width: 145px !important;">
+						return `<div style="width: 140px !important; font-size: 12px;">
                                  <p class="mb-1">${data}</p>
                                  <p><small>${row[16]}</small></p>
                                 </div>`
 					}
 				}, {
-					targets: ['meal-col', 'internet-col', 'other-col', 'total-col'],
+					targets: ['meal-col'],
 					orderable: false,
 					searchable: false,
 					render: function (data, _, row) {
-						return `<input type="text" value="${data}" class="form-control small-input" data-id="${row[17]}">`
+						return `<input type="text" data-field="jumlah_konsumsi" value="${data}" class="form-control meal-input small-input" data-id="${row[17]}">`
+					}
+				}, {
+					targets: ['internet-col'],
+					orderable: false,
+					searchable: false,
+					render: function (data, _, row) {
+						return `<input type="text" data-field="jumlah_internet" value="${data}" class="form-control internet-input small-input" data-id="${row[17]}">`
+					}
+				}, {
+					targets: ['other-col'],
+					orderable: false,
+					searchable: false,
+					render: function (data, _, row) {
+						return `<input type="text" data-field="jumlah_other" value="${data}" class="form-control other-input small-input" data-id="${row[17]}">`
+					}
+				}, {
+					targets: ['total-col'],
+					orderable: false,
+					searchable: false,
+					render: function (data, _, row) {
+						return `<input type="text" value="${data}" class="form-control total-input small-input" disabled data-id="${row[17]}">`
 					}
 				}, {
 					targets: 'payment-col',
@@ -262,6 +285,27 @@
 					},
 				});
 			}
+			const codeActivity = $('#code_activity').val()
+			const updateTotalField = () => {
+				$.ajax({
+					type: 'GET',
+					url: base_url + 'absences/get_total_participants_reimbursement/' + codeActivity,
+					error: function (xhr) {
+						const response = xhr.responseJSON;
+						console.log(response)
+					},
+					success: function (response) {
+						const data = response.data
+						if(response.success) {
+							$('#total_meal').text(data.total_konsumsi)
+							$('#total_internet').text(data.total_internet)
+							$('#total_other').text(data.total_other)
+							$('#total_all').text(data.total)
+						}
+					},
+				});
+			}
+			updateTotalField()
 			$('.small-input').number(true, 0, '', '.')
 			$(document).on('click', '.change-transfer-receipt', function (e) {
 				const $this = $(this)
@@ -361,6 +405,30 @@
 							receiptContainer.find('.meal-receipt-image').attr('href',
 								`<?= $_ENV['ASSETS_URL'] ?>${filename}?subfolder=resi_konsumsi&token=<?= $_ENV['ASSETS_TOKEN'] ?>`
 							)
+						}
+					},
+				});
+			})
+			$(document).on("keyup", '.meal-input, .other-input, .internet-input', function () {
+				const $this = $(this)
+				const value = $(this).val()
+				const field = $(this).attr('data-field')
+				const id = $(this).attr('data-id')
+				$.ajax({
+					type: 'POST',
+					url: base_url + 'absences/update_participant/' + id,
+					data: {
+						value,
+						field
+					},
+					error: function (xhr) {
+						const response = xhr.responseJSON;
+						console.log(response)
+					},
+					success: function (response) {
+						if(response.success) {
+							$this.parent().parent().find('.total-input').val(response.data.total)
+							updateTotalField()
 						}
 					},
 				});

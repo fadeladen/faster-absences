@@ -52,8 +52,8 @@ class Absences_Model extends CI_Model
     }
 
     function get_participant_data_by_id($id) {
-        return $this->db->select('format(jumlah_konsumsi, 0, "de_DE") as jumlah_konsumsi, format(jumlah_internet, 0, "de_DE") as internet_fee,
-        format(jumlah_other, 0, "de_DE") as other_fee, format(jumlah_konsumsi+jumlah_internet+jumlah_other, 0, "de_DE")  as total, resi_konsumsi, transfer_receipt')
+        return $this->db->select('format(jumlah_konsumsi, 0, "de_DE") as jumlah_konsumsi, format(jumlah_internet, 0, "de_DE") as jumlah_internet,
+        format(jumlah_other, 0, "de_DE") as jumlah_other, format(jumlah_konsumsi+jumlah_internet+jumlah_other, 0, "de_DE")  as total, resi_konsumsi, transfer_receipt')
         ->from('tb_event_absence')
         ->where('id', $id)->get()->row_array();
     }

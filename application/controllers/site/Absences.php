@@ -30,7 +30,7 @@ class Absences extends MY_Controller {
             $this->form_validation->set_rules('email_peserta', 'Email peserta', 'required');
             $this->form_validation->set_rules('jumlah_konsumsi', 'Jumlah konsumsi', 'required');
             $this->form_validation->set_rules('jumlah_internet', 'Jumlah internet', 'required');
-            // $this->form_validation->set_rules('resi_konsumsi', 'Resi konsumsi', 'required');
+            $this->form_validation->set_rules('resi_konsumsi', 'Resi konsumsi', 'required');
             $this->form_validation->set_rules('reimbursement_type', 'Proses reimbursement', 'required');
 			$this->form_validation->set_message('required', '{field} harus diisi.');
 			$type = $this->input->post('reimbursement_type');

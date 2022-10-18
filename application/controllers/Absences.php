@@ -121,11 +121,12 @@ class Absences extends MY_Controller {
             $data = $this->absences->update_participant_data($id, $payload);
             if($data) {
                 $response['data'] = $data;
-                $response['message'] = 'Absence has been created!';
+                $response['success'] = true;
+                $response['message'] = 'Data updated!';
                 $status_code = 200;
             } else {
-                $response['errors'] = $this->form_validation->error_array();
-                $response['message'] = 'Something wrong, please try again later!';
+                $response['success'] = false;
+                $response['message'] = 'Failed to update participant data!';
                 $status_code = 400;
             }
             $this->send_json($response, $status_code);
@@ -136,7 +137,7 @@ class Absences extends MY_Controller {
 	}
 
     public function participants($code_activity) {
-        $this->template->set('page', 'Participants list');
+            $this->template->set('page', 'Participants list');
             $data['detail'] = $this->absences->get_absences_by_activity_code($code_activity);
             $this->template->render('absences/participants', $data);
     }
@@ -149,5 +150,30 @@ class Absences extends MY_Controller {
             show_404();
         }
     }
+
+    public function get_total_participants_reimbursement($code_activity) {
+        if ($this->input->is_ajax_request()) {
+            $data = $this->db->select('format(sum(jumlah_konsumsi), 0, "de_DE") as total_konsumsi,
+            format(sum(jumlah_internet), 0, "de_DE") as total_internet, format(sum(jumlah_other), 0, "de_DE") as total_other,
+            format(sum(jumlah_other+jumlah_internet+jumlah_konsumsi), 0, "de_DE") as total')
+            ->get_where('tb_event_absence', [
+                'code_activity' => $code_activity
+            ])->row_array();
+            if ($data) {
+                $response['data'] = $data;
+                $response['success'] = true;
+                $status_code = 200;
+            } else {
+                $response['message'] = 'Invalid code activity!';
+                $response['success'] = false;
+                $status_code = 400;
+            }
+            $this->send_json($response, $status_code);
+        } else {
+            show_404();
+        }
+    }
+
+    
 
 }
