@@ -55,6 +55,7 @@
 									data-url="<?= base_url('absences/participants_datatable/') . $detail['code_activity']  ?>">
 									<thead>
 										<tr>
+											<th class="text-center" rowspan='2'>No</th>
 											<th rowspan='2'>Name</th>
 											<th rowspan='2'>Gender</th>
 											<th class="organization-col" rowspan='2'>Organization</th>
@@ -78,7 +79,7 @@
 									<!--end::Table body-->
 									<tfoot>
 										<tr style="padding-right: 2rem">
-											<td colspan="5" style="text-align: right;">Total :</td>
+											<td colspan="6" style="text-align: right;">Total :</td>
 											<td id="total_meal" class="text-danger text-center">
 
 											</td>
@@ -112,16 +113,21 @@
 				[0, 'desc']
 			],
 			columnDefs: [{
-					targets: [0, 1, 3],
+					targets: [0],
+					render: function (data, _, row, meta) {
+						return meta.row + meta.settings._iDisplayStart + 1;
+					}
+				}, {
+					targets: [1, 2, 4],
 					render: function (data, _, row) {
 						return `<div style="width: 80px !important; font-size: 12px;">${data}</div>`
 					}
 				}, {
 					targets: ['organization-col'],
 					render: function (data, _, row) {
-						return `<div style="width: 140px !important; font-size: 12px;">
+						return `<div style="width: 123px !important; font-size: 11px;">
                                  <p class="mb-1">${data}</p>
-                                 <p><small>${row[16]}</small></p>
+                                 <p><small>${row[17]}</small></p>
                                 </div>`
 					}
 				}, {
@@ -129,42 +135,42 @@
 					orderable: false,
 					searchable: false,
 					render: function (data, _, row) {
-						return `<input type="text" data-field="jumlah_konsumsi" value="${data}" class="form-control meal-input small-input" data-id="${row[17]}">`
+						return `<input type="text" data-field="jumlah_konsumsi" value="${data}" class="form-control meal-input small-input" data-id="${row[18]}">`
 					}
 				}, {
 					targets: ['internet-col'],
 					orderable: false,
 					searchable: false,
 					render: function (data, _, row) {
-						return `<input type="text" data-field="jumlah_internet" value="${data}" class="form-control internet-input small-input" data-id="${row[17]}">`
+						return `<input type="text" data-field="jumlah_internet" value="${data}" class="form-control internet-input small-input" data-id="${row[18]}">`
 					}
 				}, {
 					targets: ['other-col'],
 					orderable: false,
 					searchable: false,
 					render: function (data, _, row) {
-						return `<input type="text" data-field="jumlah_other" value="${data}" class="form-control other-input small-input" data-id="${row[17]}">`
+						return `<input type="text" data-field="jumlah_other" value="${data}" class="form-control other-input small-input" data-id="${row[18]}">`
 					}
 				}, {
 					targets: ['total-col'],
 					orderable: false,
 					searchable: false,
 					render: function (data, _, row) {
-						return `<input type="text" value="${data}" class="form-control total-input small-input" disabled data-id="${row[17]}">`
+						return `<input type="text" value="${data}" class="form-control total-input small-input" disabled data-id="${row[18]}">`
 					}
 				}, {
 					targets: 'payment-col',
 					render: function (data, _, row) {
-						const ovo = row[10]
-						const gopay = row[11]
-						const bank_name = row[12]
-						const bank_number = row[13]
+						const ovo = row[11]
+						const gopay = row[12]
+						const bank_name = row[13]
+						const bank_number = row[14]
 						let text = 'OVO'
 						let number = ovo
-						if (row[4] == '2') {
+						if (row[5] == '2') {
 							text = 'GOPAY'
 							number = gopay
-						} else if (row[4] == '3') {
+						} else if (row[5] == '3') {
 							text = 'Bank ' + bank_name
 							number = bank_number
 						}
@@ -185,7 +191,7 @@
 							uploadBtn = ''
 							receiptDetail = 'd-none'
 						}
-						return `<div style="width: 100px !important;" class="d-flex flex-column">
+						return `<div style="width: 95px !important;" class="d-flex flex-column">
                                         <div class="meal-receipt-container ${receiptDetail}">
                                             <a href="<?= $_ENV['ASSETS_URL'] ?>${data}?subfolder=resi_konsumsi&token=<?= $_ENV['ASSETS_TOKEN'] ?>" target="_blank" class="link-primary d-flex align-items-center meal-receipt-image">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-file-earmark-image" viewBox="0 0 16 16">
@@ -207,7 +213,7 @@
                                             </p>
                                         </div>
                                         <div class="meal-file-upload ${uploadBtn}">
-                                            <input type="file" data-id="${row[17]}" class="form-control meal-receipt-file small-file-upload">
+                                            <input type="file" data-id="${row[18]}" class="form-control meal-receipt-file small-file-upload">
                                             <small class="my-2 upload-notif"></small>
                                         </div>
 								</div>`
@@ -218,16 +224,16 @@
 					orderable: false,
 					searchable: false,
 					render: function (data, _, row) {
-						const receipt = row[14]
+						const receipt = row[15]
 						let receiptDetail = ''
 						let uploadBtn = 'd-none'
 						if (!receipt || receipt == '' || receipt == null) {
 							uploadBtn = ''
 							receiptDetail = 'd-none'
 						}
-						return `<div style="width: 100px !important;" class="d-flex flex-column">
+						return `<div style="width: 95px !important;" class="d-flex flex-column">
                                         <div class="transfer-receipt-container ${receiptDetail}">
-                                            <a href="<?= $_ENV['ASSETS_URL'] ?>${row[14]}?subfolder=transfer_receipt&token=<?= $_ENV['ASSETS_TOKEN'] ?>" target="_blank" class="link-primary d-flex align-items-center transfer-receipt-image">
+                                            <a href="<?= $_ENV['ASSETS_URL'] ?>${row[15]}?subfolder=transfer_receipt&token=<?= $_ENV['ASSETS_TOKEN'] ?>" target="_blank" class="link-primary d-flex align-items-center transfer-receipt-image">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-file-earmark-image" viewBox="0 0 16 16">
                                                     <path d="M6.502 7a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
                                                     <path d="M14 14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5V14zM4 1a1 1 0 0 0-1 1v10l2.224-2.224a.5.5 0 0 1 .61-.075L8 11l2.157-3.02a.5.5 0 0 1 .76-.063L13 10V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4z"/>
@@ -247,7 +253,7 @@
                                             </p>
                                         </div>
                                         <div class="transfer-file-upload ${uploadBtn}">
-                                            <input type="file" data-id="${row[17]}" class="form-control transfer-receipt-file small-file-upload">
+                                            <input type="file" data-id="${row[18]}" class="form-control transfer-receipt-file small-file-upload">
                                             <small class="my-2 upload-notif"></small>
                                         </div>
 								</div>`
@@ -259,8 +265,8 @@
 					searchable: false,
 					render: function (data) {
 						return `
-							   <div class="d-flex align-items-center"> 
-									<button data-id="${data}" class="btn btn-sm btn-primary btn-create">Submit</button>
+							   <div style="width: 60px !important;" class="d-flex align-items-center"> 
+									<button data-id="${data}" class="btn btn-xs btn-primary btn-send-email">Submit</button>
 							   </div>
 							`
 					}
@@ -296,7 +302,7 @@
 					},
 					success: function (response) {
 						const data = response.data
-						if(response.success) {
+						if (response.success) {
 							$('#total_meal').text(data.total_konsumsi)
 							$('#total_internet').text(data.total_internet)
 							$('#total_other').text(data.total_other)
@@ -426,7 +432,29 @@
 						console.log(response)
 					},
 					success: function (response) {
-						if(response.success) {
+						if (response.success) {
+							$this.parent().parent().find('.total-input').val(response.data.total)
+							updateTotalField()
+						}
+					},
+				});
+			})
+			$(document).on("click", '.btn-send-email', function () {
+				const $this = $(this)
+				const id = $(this).attr('data-id')
+				$.ajax({
+					type: 'POST',
+					url: base_url + 'absences/send_email_to_participant/' + id,
+					data: {
+						value,
+						field
+					},
+					error: function (xhr) {
+						const response = xhr.responseJSON;
+						console.log(response)
+					},
+					success: function (response) {
+						if (response.success) {
 							$this.parent().parent().find('.total-input').val(response.data.total)
 							updateTotalField()
 						}

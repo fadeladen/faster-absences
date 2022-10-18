@@ -409,66 +409,23 @@
 								<table role="presentation" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<td>
-											<p>Dear, <b><?= $target['name'] ?></b>,</p>
+											<p>Yth, <b><?= $detail['nama_peserta'] ?></b></p>
 											<p>
-												<p><?= $email_text ?></p>
+												Kami sudah melakukan pembayaran untuk penggantian (reimburse) makan
+												siang & internet anda pada kegiatan <b><?= $detail['activity'] ?></b> sebesar <b>Rp. <?= $detail['total'] ?></b>
+												ke akun <b> <?= $detail['payment_method'] ?> <?= ($detail['payment_method'] == 'Bank' ? $detail['bank_name'] : '') ?> </b> anda.
 											</p>
-
-											<div class="button-container">
-												<div>
-													<a class="btn btn-info"
-														href="<?= base_url('monthly_reimbursement/incoming/detail/') . encrypt($reimbursement_id)  ?>"
-														target="_blank">DETAILS</a>
-												</div>
-												<?php if ($need_confirm): ?>
-												<div>
-													<a class="btn btn-success"
-														href="<?= base_url('site/monthly_reimbursement/confirmation') ?>?reimbursement_id=<?=encrypt($reimbursement_id)?>&status=2&level=<?= $level ?>&approver_id=<?= $target['id'] ?>"
-														target="_blank">APPROVE</a>
-												</div>
-												<div>
-													<a class="btn btn-danger"
-														href="<?= base_url('site/monthly_reimbursement/confirmation') ?>?reimbursement_id=<?=encrypt($reimbursement_id)?>&status=3&level=<?= $level ?>&approver_id=<?= $target['id'] ?>"
-														target="_blank">REJECT</a>
-												</div>
-												<?php endif; ?>
-											</div>
-
-											<p>Download documents:</p>
 											<div class="button-container">
 												<div>
 													<a class="btn btn-docs"
-														href="<?= base_url('site/documents/payment_request_reimbursement/') . encrypt($reimbursement_id) ?>"
-														target="_blank">PAYMENT REQUEST FORM</a>
+														href="<?= $_ENV['ASSETS_URL'] . $detail['transfer_receipt'] ?>?subfolder=transfer_receipt&token=<?= $_ENV['ASSETS_TOKEN'] ?>"
+														target="_blank">DOWNLOAD RECEIPT</a>
 												</div>
-												<?php if ($level == 'payment'): ?>
-												<div>
-													<a class="btn btn-docs"
-														href="<?= $_ENV['ASSETS_URL'] . $detail['payment_receipt'] . '?subfolder=reimbursement_file&token=' .  $_ENV['ASSETS_TOKEN'] ?>"
-														target="_blank">PAYMENT RECEIPT</a>
-												</div>
-												<?php endif; ?>
 											</div>
+											<br>
+											<p>Terimakasih telah mengikuti kegiatan ini!</p>
 										</td>
 									</tr>
-									<table border="0" cellpadding="0" cellspacing="0">
-										<p style="margin-bottom: 0 !important; margin-top:12px !important;">Supporting
-											documents:</p>
-									</table>
-									<table border="1" cellpadding="6" cellspacing="0">
-										<tr style="text-align: left !important;">
-											<th style="width: 75%;">Item name</th>
-											<th style="width: 25%;">File</th>
-										</tr>
-										<?php foreach ($items as $item): ?>
-										<tr>
-											<td><?= $item['item_name'] ?></td>
-											<td><a class="btn-sm" target="_blank"
-													href="<?= $_ENV['ASSETS_URL'] . $item['file'] . '?subfolder=reimbursement_file&token=' .  $_ENV['ASSETS_TOKEN'] ?>">Download</a>
-											</td>
-										</tr>
-										<?php endforeach; ?>
-									</table>
 								</table>
 							</td>
 						</tr>

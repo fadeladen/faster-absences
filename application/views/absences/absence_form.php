@@ -112,9 +112,9 @@
 							</div>
 						</div>
 						<div class="form-group col-12 mb-3">
-							<label id="reimbursement_type" class="fw-bolder">Proses reimbursement</label> <br>
+							<label id="payment_method" class="fw-bolder">Proses reimbursement</label> <br>
 							<div class="form-check mt-3 mb-3">
-								<input class="form-check-input" value="1" type="radio" name="reimbursement_type" id="p1">
+								<input class="form-check-input" value="1" type="radio" name="payment_method" id="p1">
 								<label class="form-check-label" for="p1">
 									OVO
 								</label>
@@ -123,7 +123,7 @@
 								<input placeholder="Masukkan nomor OVO" type="text" class="form-control" name="ovo_number" id="ovo_number">
 							</div>
 							<div class="form-check mt-5">
-								<input class="form-check-input" value="2" type="radio" name="reimbursement_type" id="p2">
+								<input class="form-check-input" value="2" type="radio" name="payment_method" id="p2">
 								<label class="form-check-label" for="p2">
 									GOPAY
 								</label>
@@ -132,7 +132,7 @@
 								<input placeholder="Masukkan nomor GOPAY" type="text" class="form-control" name="gopay_number" id="gopay_number">
 							</div>
 							<div class="form-check mt-5">
-								<input class="form-check-input" value="3" type="radio" name="reimbursement_type" id="p3">
+								<input class="form-check-input" value="3" type="radio" name="payment_method" id="p3">
 								<label class="form-check-label" for="p3">
 									Bank
 								</label>
@@ -179,7 +179,7 @@
 
 <script>
 	$(document).ready(function () {
-        $('input[name=reimbursement_type]').change(function () {
+        $('input[name=payment_method]').change(function () {
             const value = $(this).val();
             if (value == '1') {
                 $('.ovo-field').removeClass('d-none')

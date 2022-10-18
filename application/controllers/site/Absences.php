@@ -30,10 +30,10 @@ class Absences extends MY_Controller {
             $this->form_validation->set_rules('email_peserta', 'Email peserta', 'required');
             $this->form_validation->set_rules('jumlah_konsumsi', 'Jumlah konsumsi', 'required');
             $this->form_validation->set_rules('jumlah_internet', 'Jumlah internet', 'required');
-            $this->form_validation->set_rules('resi_konsumsi', 'Resi konsumsi', 'required');
-            $this->form_validation->set_rules('reimbursement_type', 'Proses reimbursement', 'required');
+            // $this->form_validation->set_rules('resi_konsumsi', 'Resi konsumsi', 'required');
+            $this->form_validation->set_rules('payment_method', 'Proses reimbursement', 'required');
 			$this->form_validation->set_message('required', '{field} harus diisi.');
-			$type = $this->input->post('reimbursement_type');
+			$type = $this->input->post('payment_method');
 			if($type == '1') {
 				$this->form_validation->set_rules('ovo_number', 'Nomor OVO', 'required');
 			} else if($type == '2') {
@@ -49,8 +49,8 @@ class Absences extends MY_Controller {
 					$response['payload'] = $payload;
 					$response['message'] = 'Data berhasil disimpan!';
 					$response['html'] = '<div class="text-center my-5 py-3 border-bottom">
-											<h1 class="mb-3">Terimakasih sudah mengisi form!</h1>
-											<img src="'.base_url('assets/images/svg/thanks.svg').'" style="height: 15rem; width: auto;" alt="">
+											<h1 class="mb-5 pb-2">Terimakasih sudah mengisi form!</h1>
+											<img src="'.base_url('assets/images/svg/submitted.svg').'" style="height: 14rem; width: auto;" alt="">
 										</div>';
 					$status_code = 200;
 				} else {

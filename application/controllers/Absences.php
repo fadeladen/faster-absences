@@ -44,6 +44,8 @@ class Absences extends MY_Controller {
         $this->datatable->join('tb_units un', 'u.unit_id = un.id');
         $this->datatable->join('tb_detail_monthly dm', 'dm.kode_kegiatan = pn.code_activity');
         $this->datatable->where('pn.status_finance', '1');
+        $this->datatable->edit_column('local_transport', '$1', '-');
+        $this->datatable->edit_column('internet', '$1', '-');
         // $this->datatable->where_in('pn.direct_fund_code', $program_assistance_df_number);
         // $this->datatable->where("dm.year = '".date('Y')."' and (dm.month IN('" . date('n') . "','" . (date('n') + 1) . "') OR dm.month_postponse IN('" . date('n') . "','" . (date('n') + 1) . "') )");
 
@@ -68,15 +70,15 @@ class Absences extends MY_Controller {
 
     public function participants_datatable($code_activity)
     {
-        $this->datatable->select('nama_peserta, (
+        $this->datatable->select('id, nama_peserta, (
             CASE 
                 WHEN jenis_kelamin = "1" THEN "Male"
                 WHEN jenis_kelamin = "2" THEN "Female"
                 ELSE "Transgender"
             END) AS jenis_kelamin, asal_layanan,email_peserta,
-        reimbursement_type, format(jumlah_konsumsi, 0, "de_DE") as jumlah_konsumsi, format(jumlah_internet, 0, "de_DE") as internet_fee,
+        payment_method, format(jumlah_konsumsi, 0, "de_DE") as jumlah_konsumsi, format(jumlah_internet, 0, "de_DE") as internet_fee,
         format(jumlah_other, 0, "de_DE") as other_fee, format(jumlah_konsumsi+jumlah_internet+jumlah_other, 0, "de_DE")  as total, 
-        resi_konsumsi, ovo_number, gopay_number, bank_name, bank_number, transfer_receipt, phone_number, nama_lembaga, id');
+        resi_konsumsi, ovo_number, gopay_number, bank_name, bank_number, transfer_receipt, phone_number, nama_lembaga, id as input');
         $this->datatable->from('tb_event_absence');
         $this->datatable->where('code_activity', $code_activity);
         echo $this->datatable->generate();
@@ -172,6 +174,48 @@ class Absences extends MY_Controller {
         } else {
             show_404();
         }
+    }
+
+    public function send_email_to_participant($participant_id) {
+        $this->load->library('Phpmailer_library');
+        $mail = $this->phpmailer_library->load();
+        $mail->isSMTP();
+        $mail->SMTPSecure = 'ssl';
+        $mail->Host = $_ENV['EMAIL_HOST'];
+        $mail->Port = 465;
+        $mail->SMTPDebug = 0; 
+        $mail->SMTPAuth = true;
+        $mail->Username = $_ENV['EMAIL_USERNAME'];
+        $mail->Password = $_ENV['EMAIL_PASSWORD'];
+       
+        $detail = $this->db->select('e.code_activity, dm.activity, e.nama_peserta, e.email_peserta,
+        format(e.jumlah_konsumsi+e.jumlah_internet+e.jumlah_other, 0, "de_DE")  as total, (
+            CASE 
+                WHEN e.payment_method = "1" THEN "OVO"
+                WHEN e.payment_method = "2" THEN "GOPAY"
+                ELSE "Bank"
+            END) AS payment_method, e.bank_name, e.transfer_receipt')
+        ->from('tb_event_absence e')
+        ->join('absences a', 'a.code_activity = e.code_activity')
+        ->join('tb_detail_monthly dm', 'dm.kode_kegiatan = e.code_activity')
+        ->where('e.id', $participant_id)
+        ->get()->row_array();
+        $data['detail'] = $detail;
+
+        // $this->load->view('template/email/participant_reimbursement', $data);
+        $text = $this->load->view('template/email/participant_reimbursement', $data, true);
+        $mail->setFrom('no-reply@faster.bantuanteknis.id', 'FASTER-FHI360');
+        $mail->addAddress($detail['email_peserta']);
+        $mail->Subject = "Reimbursement Payment";
+        $mail->isHTML(true);
+        $mail->Body = $text;
+        $sent=$mail->send();
+
+		if ($sent) {
+			return true;
+		} else {
+			return false;
+		}
     }
 
     
