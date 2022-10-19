@@ -20,6 +20,13 @@ class Absences extends MY_Controller {
         $this->template->render('absences/index');
 	}
 
+    public function detail($code_activity) {
+
+        $data['detail'] = $this->absences->get_activity_detail($code_activity);
+		$this->template->set('page', 'Absences detail');
+        $this->template->render('absences/detail', $data);
+	}
+
     public function data() {
 		$this->template->set('page', 'Internet, local transport & fee');
         $this->template->render('absences/data');
@@ -34,21 +41,11 @@ class Absences extends MY_Controller {
 		}
     }
 
-    public function absences_datatable()
+    public function session_datatable($code_activity)
     {	
-        $this->datatable->select('pn.advance_number, dm.activity,dm.kode_kegiatan as participant_receipt, dm.kode_kegiatan as local_transport,
-        dm.kode_kegiatan as internet, dm.kode_kegiatan as download, dm.kode_kegiatan as action');
-        $this->datatable->from('tb_mini_proposal_new pn');
-        $this->datatable->join('absences abs', 'abs.code_activity = pn.code_activity');
-        $this->datatable->join('tb_userapp u', 'u.id = pn.create_by');
-        $this->datatable->join('tb_units un', 'u.unit_id = un.id');
-        $this->datatable->join('tb_detail_monthly dm', 'dm.kode_kegiatan = pn.code_activity');
-        $this->datatable->where('pn.status_finance', '1');
-        $this->datatable->edit_column('local_transport', '$1', '-');
-        $this->datatable->edit_column('internet', '$1', '-');
-        // $this->datatable->where_in('pn.direct_fund_code', $program_assistance_df_number);
-        // $this->datatable->where("dm.year = '".date('Y')."' and (dm.month IN('" . date('n') . "','" . (date('n') + 1) . "') OR dm.month_postponse IN('" . date('n') . "','" . (date('n') + 1) . "') )");
-
+        $this->datatable->select('abs.session_title, abs.valid_when, abs.id as status,abs.attendance_link, abs.id as absence_id');
+        $this->datatable->from('absences abs');
+        $this->datatable->where('code_activity', $code_activity);
         echo $this->datatable->generate();
     }
 
@@ -61,7 +58,6 @@ class Absences extends MY_Controller {
         $this->datatable->join('tb_units un', 'u.unit_id = un.id');
         $this->datatable->join('tb_detail_monthly dm', 'dm.kode_kegiatan = pn.code_activity');
         $this->datatable->where('pn.status_finance', '1');
-        $this->datatable->edit_column('action', '$1', 'absence_action_btn(action)');
         // $this->datatable->where_in('pn.direct_fund_code', $program_assistance_df_number);
         // $this->datatable->where("dm.year = '".date('Y')."' and (dm.month IN('" . date('n') . "','" . (date('n') + 1) . "') OR dm.month_postponse IN('" . date('n') . "','" . (date('n') + 1) . "') )");
 
@@ -85,14 +81,15 @@ class Absences extends MY_Controller {
     }
 
     public function store() {
-		$this->form_validation->set_rules('start_date', 'Start date', 'required');
-		$this->form_validation->set_rules('end_date', 'End date', 'required');
 		$this->form_validation->set_rules('kind_of_meeting', 'Kind of meeting', 'required');
 		$kind_of_meeting = $this->input->post('kind_of_meeting');
 		if($kind_of_meeting == '1' || $kind_of_meeting == '3') {
+			$this->form_validation->set_rules('session_title', 'Meeting link', 'required');
 			$this->form_validation->set_rules('meeting_link', 'Meeting link', 'required');
-			$this->form_validation->set_rules('valid_date', 'Valid date', 'required');
-			$this->form_validation->set_rules('valid_time', 'Valid time', 'required');
+			$this->form_validation->set_rules('valid_until_date', 'When date', 'required');
+			$this->form_validation->set_rules('valid_until_time', 'When time', 'required');
+			$this->form_validation->set_rules('valid_when_date', 'Until date', 'required');
+			$this->form_validation->set_rules('valid_when_time', 'Until time', 'required');
 		}
 
 		if ($this->form_validation->run()) {
@@ -101,7 +98,8 @@ class Absences extends MY_Controller {
             $saved = $this->absences->insert_absences($payload);
             if($saved) {
                 $response['payload'] = $payload;
-                $response['message'] = 'Absence has been created!';
+                $response['success'] = true;
+                $response['message'] = 'Session has been created!';
                 $status_code = 200;
             } else {
                 $response['errors'] = $this->form_validation->error_array();

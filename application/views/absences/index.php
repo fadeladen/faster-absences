@@ -13,7 +13,7 @@
 									<span class="text-muted mt-1 fw-bold fs-7"></span>
 								</h3>
 								<div class="card-toolbar">
-									<a class="btn btn-primary" href="<?= base_url('absences/data') ?>">
+									<!-- <a class="btn btn-primary" href="<?= base_url('absences/data') ?>">
 										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
 											fill="currentColor" class="bi bi-list-ul" viewBox="0 0 16 16">
 											<path fill-rule="evenodd"
@@ -22,7 +22,7 @@
 										<span class="ms-1">
 											Internet, local transport & fee
 										</span>
-									</a>
+									</a> -->
 								</div>
 							</div>
 
@@ -63,6 +63,22 @@
 				[0, 'desc']
 			],
 			columnDefs: [{
+				targets: 'action-col',
+				orderable: false,
+				searchable: false,
+				render: function (data, _, row) {
+					return `
+	                   <div style="width: 90px;" class="d-flex align-items-center"> 
+                           <a class="btn p-2 fw-bolder btn-icon btn-light" href="${base_url}absences/detail/${data}">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+									<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+									<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+								</svg>  
+						   </a>
+	                   </div>
+	                `
+				}
+			},{
 				targets: 'numbers-col',
 				orderable: false,
 				searchable: false,
@@ -109,83 +125,6 @@
 							</div>`
 				}
 			}]
-		})
-
-		$(document).on('click', '.btn-copy-link', function (e) {
-				var $temp = $("<input>");
-				$("body").append($temp);
-				const link = base_url + 'site/absences/form/' + $(this).attr('data-id')
-				$(this).select();
-				navigator.clipboard.writeText(link);
-				showToast('Copied', 'Absence link copied to clipboard', 'success')
-		})
-
-		$(document).on('click', '.btn-create', function (e) {
-			const activity_code = $(this).attr('data-id')
-			$.get(base_url +
-				`absences/create?activity_code=${activity_code}`,
-				function (html) {
-					$('#myModal').html(html)
-					$('#myModal').modal('show')
-				});
-			initFormAjax('#absence-form', {
-				error: function (xhr) {
-					const response = xhr.responseJSON;
-					if (response.errors) {
-						for (const err in response.errors) {
-							const $parent = $(`#${err.replace("[]", "")}`).parent();
-							$(`#${err.replace("[]", "")}`).addClass("is-invalid");
-							if ($parent.find("invalid-feeedback").length == 0) {
-								$parent.append(
-									`<div class="invalid-feedback">${response.errors[err]}</div>`
-								);
-							}
-						}
-					}
-					Swal.fire({
-						"title": "Something went wrong!",
-						"text": response.message,
-						"icon": "error",
-						"confirmButtonColor": '#000'
-					});
-				},
-				success: function (data) {
-					Swal.fire({
-						"title": "Saved!",
-						"text": data.message,
-						"icon": "success",
-						"confirmButtonColor": '#000'
-					}).then((result) => {
-						if (result.value) {
-							$('#myModal').modal('hide')
-						}
-						table.draw()
-					})
-				},
-			})
-			// $(document).on('click', '.btn-copy-link', function (e) {
-			// 	var $temp = $("<input>");
-			// 	$("body").append($temp);
-			// 	const link = base_url + 'site/absences/form/' + $(this).attr('data-id')
-			// 	$(this).select();
-			// 	navigator.clipboard.writeText(link);
-			// 	showToast('Copied', 'Absence link copied to clipboard', 'success')
-			// })
-
-			$(document).on('change', '#kind_of_meeting', function (e) {
-				const value = $(this).val()
-				if (value == 1) {
-					$('.online-hybrid').removeClass('d-none')
-					$('.qrcode').addClass('d-none')
-				} else if (value == 2) {
-					$('.qrcode').removeClass('d-none')
-					$('.online-hybrid').addClass('d-none')
-				} else if (value == 3) {
-					$('.qrcode').removeClass('d-none')
-					$('.online-hybrid').removeClass('d-none')
-				}
-			})
-
 		})
 
 	</script>

@@ -9,10 +9,10 @@
 				value="<?= $activity_code ?>">
 			<div class="modal-body">
 				<div class="form-group mb-3">
-					<label for="actual_">Activity code</label>
-					<input type="text" class="form-control mt-2" disabled value="<?= $activity_code ?>">
+					<label for="actual_">Session title</label>
+					<input type="text" class="form-control mt-2" id="session_title" name="session_title">
 				</div>
-				<div class="form-group mb-3">
+				<!-- <div class="form-group mb-3">
 					<label for="actual_">Actual date of activity</label>
 					<div class="row mt-2">
 						<div class="col-md-6">
@@ -32,7 +32,7 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				</div> -->
 				<div class="form-group mb-3">
 					<label for="actual_">Kind of meeting</label>
 					<select name="kind_of_meeting" id="kind_of_meeting" class="form-select">
@@ -43,7 +43,7 @@
 					</select>
 				</div>
 				<div class="online-hybrid mb-3 d-none">
-					<div class="form-group mb-3">
+					<!-- <div class="form-group mb-3">
 						<label for="actual_">Absence link</label>
 						<div class="d-flex justify-content-between align-items-center mb-3">
 							<input style="width: 85%;" type="text" class="form-control" disabled
@@ -59,21 +59,35 @@
 								</a>
 							</div>
 						</div>
-					</div>
+					</div> -->
 					<div class="form-group mb-3">
 						<label for="actual_">Meeting link</label>
-						<textarea name="meeting_link" id="meeting_link" class="form-control" rows="2"></textarea>
+						<textarea placeholder="https://example.com" name="meeting_link" id="meeting_link" class="form-control mt-1" rows="2"></textarea>
 					</div>
-					<div class="form-group mb-3">
-						<label>Valid until</label>
-						<div class="row mt-2">
-							<div class="col-md-6">
-								<input type="date" name="valid_date" id="valid_date" class="form-control">
-							</div>
-							<div class="col-md-6">
-								<input type="time" name="valid_time" id="valid_time" class="form-control">
+					<div class="form-group mb-3 row">
+						<div class="col-md-6">
+							<label>Valid when</label>
+							<div class="row mt-2">
+								<div class="col-md-8">
+									<input type="date" name="valid_when_date" id="valid_when_date" class="form-control">
+								</div>
+								<div class="col-md-4">
+									<input type="time" name="valid_when_time" id="valid_when_time" class="form-control">
+								</div>
 							</div>
 						</div>
+						<div class="col-md-6">
+							<label>Valid until</label>
+							<div class="row mt-2">
+								<div class="col-md-8">
+									<input type="date" name="valid_until_date" id="valid_until_date" class="form-control">
+								</div>
+								<div class="col-md-4">
+									<input type="time" name="valid_until_time" id="valid_until_time" class="form-control">
+								</div>
+							</div>
+						</div>
+
 					</div>
 				</div>
 				<div class="qrcode mb-3 py-4 border-top border-bottom d-none">

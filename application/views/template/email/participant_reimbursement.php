@@ -411,7 +411,7 @@
 										<td>
 											<p>Yth, <b><?= $detail['nama_peserta'] ?></b></p>
 											<p>
-												Kami sudah melakukan pembayaran untuk penggantian (reimburse) makan
+												Kami sudah melakukan pembayaran penggantian untuk makan
 												siang & internet anda pada kegiatan <b><?= $detail['activity'] ?></b> sebesar <b>Rp. <?= $detail['total'] ?></b>
 												ke akun <b> <?= $detail['payment_method'] ?> <?= ($detail['payment_method'] == 'Bank' ? $detail['bank_name'] : '') ?> </b> anda.
 											</p>

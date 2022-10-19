@@ -3,13 +3,24 @@ class Absences_Model extends CI_Model
 {   
     protected $fillable_columns = [
         "code_activity",
+        "session_title",
         "kind_of_meeting",
-        "start_date",
-        "end_date",
         "meeting_link",
+        "valid_when",
         "valid_until",
         "created_by",
     ];
+
+    function get_activity_detail($code_activity) {
+        return $this->db->select('pn.advance_number, u.username as requestor_name, DATE_FORMAT(pn.tor_approve_date, "%d %M %Y") as tor_approve_date, dm.activity, pn.tor_number,
+        dm.kode_kegiatan, u.avatar, u.purpose, un.unit_name')
+        ->from('tb_mini_proposal_new pn')
+        ->join('tb_userapp u', 'u.id = pn.create_by')
+        ->join('tb_units un', 'u.unit_id = un.id')
+        ->join('tb_detail_monthly dm', 'dm.kode_kegiatan = pn.code_activity')
+        ->where('pn.code_activity', $code_activity)
+        ->get()->row_array();
+    }
 
     function get_absences_by_activity_code($code_activity) {
         return $this->db->select('dm.activity, mp.advance_number, a.id as absence_id, a.*')->from('absences a')
@@ -21,17 +32,22 @@ class Absences_Model extends CI_Model
     function insert_absences($payload) {
         $abs_data = array_intersect_key($payload, array_flip($this->fillable_columns));
         $this->db->trans_start();
-        $valid_date = $payload['valid_date'];
-        $valid_time = $payload['valid_time'];
-        $abs_data['valid_until'] = date("$valid_date $valid_time");
+        $valid_when_date = $payload['valid_when_date'];
+        $valid_when_time = $payload['valid_when_time'];
+        $abs_data['valid_when'] = date("$valid_when_date $valid_when_time");
+        $valid_until_date = $payload['valid_until_date'];
+        $valid_until_time = $payload['valid_until_time'];
+        $abs_data['valid_until'] = date("$valid_until_date $valid_until_time");
         $this->db->insert('absences', $abs_data);
         $absence_id =  $this->db->insert_id();
+        $attendance_link = encrypt($absence_id);
+        $attendance_link = substr($attendance_link,0,15);
+        $this->db->where('id', $absence_id)->update('absences', ['attendance_link' => $attendance_link]);
         $this->db->trans_complete();
         if($this->db->trans_status()) {
             return $absence_id;
         }
         return false;
-
     }
 
     function insert_attendance($payload) {

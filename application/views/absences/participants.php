@@ -410,6 +410,7 @@
 									'Receipt has been uploaded!')
 								.addClass('text-success')
 							$this.parent().addClass('d-none')
+							$this.parent().parent().parent().parent().find('.btn-send-email').attr('disabled', false)
 							const receiptContainer = $this.parent().parent().find(
 								'.meal-receipt-container')
 							receiptContainer.removeClass('d-none')
