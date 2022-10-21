@@ -1,3 +1,27 @@
+<style>
+
+	.range {
+		width: 180px;
+		height: 12px;
+		-webkit-appearance: none;
+		background: #fee2e2;
+		outline: none;
+		border-radius: 15px;
+		overflow: hidden;
+	}
+
+	.range::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		width: 15px;
+		height: 15px;
+		border-radius: 50%;
+		background: #ef4444;
+		cursor: pointer;
+		box-shadow: -407px 0 0 400px #ef4444;
+	}
+
+</style>
+
 <div class="post d-flex flex-column-fluid" id="kt_post">
 	<div id="kt_content_container" class="container-xxl px-4">
 		<div class="post d-flex flex-column-fluid" id="kt_post">
@@ -59,7 +83,7 @@
 							</div>
 							<div class="card-body pt-0">
 								<div class="d-flex flex-column">
-									<div class="d-flex align-items-center">
+									<div class="d-flex align-items-center mb-5">
 										<img style="width: 4rem !important; height: 4rem !important; border-radius: 8px !important; object-fit: cover !important;"
 											class="img-fluid me-5"
 											src="<?= ($detail['avatar'] == null) ? base_url('assets/images/no-avatar.png') : $_ENV['ASSETS_URL'] . $detail['avatar'] .'?subfolder=avatars&token=' . $_ENV['ASSETS_TOKEN'] ?>"
@@ -76,6 +100,14 @@
 													Requestor
 												</small>
 											</div>
+										</div>
+									</div>
+									<div class="text-center pt-5 my-5">
+										<h1 class="fw-bolder text-gray-800 mb-1">2 of <?= $detail['total_absences'] ?></h1>
+										<small class="text-muted fw-bold fs-6">Event Expired</small>
+										<div class="range-container mt-2">
+											<Input class="range" type="range" value="2" min="0" max="<?= $detail['total_absences'] ?>">
+											</Input>
 										</div>
 									</div>
 								</div>
@@ -138,12 +170,12 @@
 				orderable: false,
 				searchable: false,
 				render: function (data, type, row, meta) {
-					return `<div><span class="custom-badge cb-dark">${meta.row + meta.settings._iDisplayStart + 1}</span></div>`
+					return `<div class="mt-3"><span class="custom-badge cb-dark">${meta.row + meta.settings._iDisplayStart + 1}</span></div>`
 				}
 			}, {
 				targets: 'title-col',
 				render: function (data, _, row) {
-					return `<h4 class="fw-bolder text-gray-700">${data}</h4>`
+					return `<h4 class="fw-bolder mt-3 text-gray-700">${data}</h4>`
 				}
 			}, {
 				targets: 'session-col',
@@ -152,7 +184,7 @@
 				render: function (data, _, row) {
 					return `<div style="font-size:11px !important; width:100px;">
 								<p class="mb-1">${data}</p>
-								<p >${row[6]}</p>
+								<p class="mb-0">${row[6]}</p>
 							</div>`
 				}
 			}, {
@@ -190,7 +222,7 @@
 									Options
 								</a>
 								<ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-									<li><a class="dropdown-item" target="_blank" href="#">Download PDF</a></li>
+									<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/participants_list_by_session/${row[7]}">Download PDF</a></li>
 									<li><a class="dropdown-item btn-participants" data-id="${data}" href="#">Manual transfer</a></li>
 								</ul>
 							</div>`
@@ -248,16 +280,21 @@
 											1;
 									}
 								}, {
-									targets: [1, 2],
+									targets: [2],
 									render: function (data, _, row) {
-										return `<div style="width: 80px !important; font-size: 12px;">${data}</div>`
+										return `<div style="width: 60px !important; font-size: 12px;">${data}</div>`
+									}
+								}, {
+									targets: [1],
+									render: function (data, _, row) {
+										return `<div style="width: 120px !important; font-size: 12px;">${data}</div>`
 									}
 								}, {
 									targets: ['organization-col'],
 									render: function (data, _, row) {
 										return `<div style="width: 123px !important; font-size: 11px;">
 													<p class="mb-1">${data}</p>
-													<p><small>${row[17]}</small></p>
+										 			<p><small>${row[17]}</small></p>
 												</div>`
 									}
 								}, {
@@ -472,9 +509,9 @@
 										.addClass('text-danger')
 									$this.val(null);
 									$this.parent().parent().parent().parent()
-											.find(
-												'.btn-send-email').attr('disabled',
-												true)
+										.find(
+											'.btn-send-email').attr('disabled',
+											true)
 								},
 								success: function (response) {
 									if (response.status === true) {
@@ -554,33 +591,34 @@
 								},
 							});
 						})
-						$(document).on("keyup", '.meal-input, .other-input, .internet-input', function () {
-							$('.small-input').number(true, 0, '', '.')
-							const $this = $(this)
-							const value = $(this).val()
-							const field = $(this).attr('data-field')
-							const id = $(this).attr('data-id')
-							$.ajax({
-								type: 'POST',
-								url: base_url + 'absences/update_participant/' + id,
-								data: {
-									value,
-									field
-								},
-								error: function (xhr) {
-									const response = xhr.responseJSON;
-									console.log(response)
-								},
-								success: function (response) {
-									if (response.success) {
-										$this.parent().parent().find('.total-input')
-											.val(response
-												.data.total)
-										updateTotalField(absence_id)
-									}
-								},
-							});
-						})
+						$(document).on("keyup", '.meal-input, .other-input, .internet-input',
+							function () {
+								$('.small-input').number(true, 0, '', '.')
+								const $this = $(this)
+								const value = $(this).val()
+								const field = $(this).attr('data-field')
+								const id = $(this).attr('data-id')
+								$.ajax({
+									type: 'POST',
+									url: base_url + 'absences/update_participant/' + id,
+									data: {
+										value,
+										field
+									},
+									error: function (xhr) {
+										const response = xhr.responseJSON;
+										console.log(response)
+									},
+									success: function (response) {
+										if (response.success) {
+											$this.parent().parent().find('.total-input')
+												.val(response
+													.data.total)
+											updateTotalField(absence_id)
+										}
+									},
+								});
+							})
 						$(document).on("click", '.btn-send-email', function () {
 							const $this = $(this)
 							const id = $(this).attr('data-id')

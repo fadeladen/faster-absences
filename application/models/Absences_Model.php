@@ -31,10 +31,11 @@ class Absences_Model extends CI_Model
     }
 
     function get_absences_by_id($id) {
-        return $this->db->select('dm.activity, mp.advance_number, a.id as absence_id, a.*')
+        return $this->db->select('dm.activity, u.username as pa_name, u.purpose as pa_purpose, mp.advance_number, a.id as absence_id, a.*')
         ->from('absences a')
         ->join('tb_detail_monthly dm', 'dm.kode_kegiatan = a.code_activity')
         ->join('tb_mini_proposal_new mp', 'a.code_activity = mp.code_activity')
+        ->join('tb_userapp u', 'a.created_by = u.id')
         ->where('a.id', $id)->get()->row_array();
     }
 
@@ -44,6 +45,21 @@ class Absences_Model extends CI_Model
         ->join('tb_detail_monthly dm', 'dm.kode_kegiatan = a.code_activity')
         ->join('tb_mini_proposal_new mp', 'a.code_activity = mp.code_activity')
         ->where('a.attendance_link', $link)->get()->row_array();
+    }
+
+    function get_participants_by_id($absence_id) {
+        return $this->db->select('id, nama_peserta, (
+            CASE 
+                WHEN jenis_kelamin = "1" THEN "Male"
+                WHEN jenis_kelamin = "2" THEN "Female"
+                ELSE "Transgender"
+            END) AS jenis_kelamin, asal_layanan,email_peserta,
+        payment_method, format(jumlah_konsumsi, 0, "de_DE") as jumlah_konsumsi, format(jumlah_internet, 0, "de_DE") as internet_fee,
+        format(jumlah_other, 0, "de_DE") as other_fee, format(jumlah_konsumsi+jumlah_internet+jumlah_other, 0, "de_DE")  as total, 
+        resi_konsumsi, ovo_number, gopay_number, bank_name, bank_number, transfer_receipt, phone_number, nama_lembaga, id as input, is_email_send')
+        ->from('absence_participants')
+        ->where('absence_id', $absence_id)
+        ->get()->result();
     }
 
     function insert_absences($payload) {

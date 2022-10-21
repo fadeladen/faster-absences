@@ -22,7 +22,10 @@ class Absences extends MY_Controller {
 
     public function detail($code_activity) {
 
-        $data['detail'] = $this->absences->get_activity_detail($code_activity);
+        $detail = $this->absences->get_activity_detail($code_activity);
+        $total_absence = $this->db->select('count(id) as total')->from('absences')->where('code_activity', $code_activity)->get()->row()->total;
+        $detail['total_absences'] = $total_absence;
+        $data['detail'] = $detail;
 		$this->template->set('page', 'Absences detail');
         $this->template->render('absences/detail', $data);
 	}
@@ -44,10 +47,11 @@ class Absences extends MY_Controller {
     public function session_datatable($code_activity)
     {	
         $this->datatable->select('abs.id, abs.session_title, DATE_FORMAT(abs.valid_when, "%d-%m-%Y %H:%i") as valid_when,
-        abs.id as status,abs.attendance_link, abs.id as absence_id, DATE_FORMAT(abs.valid_until, "%d-%m-%Y %H:%i")');
+        abs.id as status, abs.attendance_link, abs.id as absence_id, DATE_FORMAT(abs.valid_until, "%d-%m-%Y %H:%i"), abs.id as enc_id');
         $this->datatable->from('absences abs');
         $this->datatable->where('code_activity', $code_activity);
         $this->datatable->edit_column('status', '$1', 'absence_session_badge(status)');
+        $this->datatable->edit_column('enc_id', '$1', 'encrypt(enc_id)');
         echo $this->datatable->generate();
     }
 
@@ -246,7 +250,5 @@ class Absences extends MY_Controller {
 			return false;
 		}
     }
-
-    
 
 }
