@@ -183,7 +183,7 @@
 				searchable: false,
 				render: function (data, _, row) {
 					return `<div style="width: 90px;" class="dropdown">
-								<a class="btn btn-sm btn-secondary dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+								<a class="btn btn-sm bg-lighten text-muted dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
 									Options
 								</a>
 								<ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">

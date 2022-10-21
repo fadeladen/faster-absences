@@ -10,11 +10,21 @@ class Absences extends MY_Controller {
 		$this->template->set_default_layout('layouts/blank');
 	}
 
-	public function form($activity_code) {
-        $detail = $this->absences->get_absences_by_activity_code($activity_code);
+	public function form($link) {
+        $detail = $this->absences->get_absences_by_link($link);
 		if($detail) {
 			$data['detail'] = $detail;
-			$this->template->render('absences/absence_form', $data);
+			$status = is_session_expired($detail['absence_id']);
+			if($status == 'Active') {
+				$this->template->render('absences/absence_form', $data);
+			} else {
+				$info = 'Absen akan dibuka pada jam ' . $detail['valid_when'];
+				if($status == 'Expired') {
+					$info = 'Maaf, kegiatan sudah berakhir!';
+				}
+				$data['info'] = $info;
+				$this->template->render('absences/session_info', $data);
+			}
 		} else {
 			show_404();
 		}

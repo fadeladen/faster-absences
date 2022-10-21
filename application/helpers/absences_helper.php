@@ -28,8 +28,8 @@ if (!function_exists('absence_action_btn')) {
     }
 }
 
-if (!function_exists('absence_session_status')) {
-    function absence_session_status($id)
+if (!function_exists('absence_session_badge')) {
+    function absence_session_badge($id)
     {   
         $ci = &get_instance();
         $absences = $ci->db->select('valid_when, valid_until')
@@ -48,5 +48,25 @@ if (!function_exists('absence_session_status')) {
             $color = 'cb-warning';
         }
         return "<div class='mt-3'><span class='custom-badge $color'>$status</span></div>";
+    }
+}
+
+if (!function_exists('is_session_expired')) {
+    function is_session_expired($id)
+    {   
+        $ci = &get_instance();
+        $absences = $ci->db->select('valid_when, valid_until')
+        ->from('absences')
+        ->where('id', $id)
+        ->get()->row_array();
+        $now = date('Y-m-d H:i:s');   
+        if($now > $absences['valid_when'] && $now < $absences['valid_until']) {
+            $status = 'Active';
+        } else if ($now > $absences['valid_when'])  {
+            $status = 'Expired'; 
+        } else if($now < $absences['valid_when']) {
+            $status = 'Coming';
+        }
+        return $status;
     }
 }

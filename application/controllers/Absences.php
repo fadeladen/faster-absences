@@ -47,7 +47,7 @@ class Absences extends MY_Controller {
         abs.id as status,abs.attendance_link, abs.id as absence_id, DATE_FORMAT(abs.valid_until, "%d-%m-%Y %H:%i")');
         $this->datatable->from('absences abs');
         $this->datatable->where('code_activity', $code_activity);
-        $this->datatable->edit_column('status', '$1', 'absence_session_status(status)');
+        $this->datatable->edit_column('status', '$1', 'absence_session_badge(status)');
         echo $this->datatable->generate();
     }
 

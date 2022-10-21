@@ -23,10 +23,19 @@ class Absences_Model extends CI_Model
     }
 
     function get_absences_by_activity_code($code_activity) {
-        return $this->db->select('dm.activity, mp.advance_number, a.id as absence_id, a.*')->from('absences a')
+        return $this->db->select('dm.activity, mp.advance_number, a.id as absence_id, a.*')
+        ->from('absences a')
         ->join('tb_detail_monthly dm', 'dm.kode_kegiatan = a.code_activity')
         ->join('tb_mini_proposal_new mp', 'a.code_activity = mp.code_activity')
         ->where('a.code_activity', $code_activity)->get()->row_array();
+    }
+
+    function get_absences_by_link($link) {
+        return $this->db->select('dm.activity, mp.advance_number, a.id as absence_id, a.*, DATE_FORMAT(a.valid_when, "%H:%i, %d %M %Y") as valid_when')
+        ->from('absences a')
+        ->join('tb_detail_monthly dm', 'dm.kode_kegiatan = a.code_activity')
+        ->join('tb_mini_proposal_new mp', 'a.code_activity = mp.code_activity')
+        ->where('a.attendance_link', $link)->get()->row_array();
     }
 
     function insert_absences($payload) {
