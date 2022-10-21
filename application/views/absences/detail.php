@@ -47,7 +47,7 @@
 		<div class="post d-flex flex-column-fluid" id="kt_post">
 			<div class="container-xxl px-2">
 				<div class="row g-5 g-xl-8">
-					<div class="col-md-4">
+					<div class="col-md-3">
 						<div class="card card-xl-stretch mb-5 mb-xl-8">
 							<div class="card-header border-0 pt-5">
 								<h3 class="card-title align-items-start flex-column border-bottom w-100 pb-3"><span
@@ -82,7 +82,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-8">
+					<div class="col-md-9">
 						<div class="card card-xl-stretch mb-5 mb-xl-8">
 							<div class="card-header border-bottom pb-3 pt-5">
 								<div>
@@ -100,14 +100,16 @@
 								</div>
 							</div>
 							<div class="card-body pt-4">
-								<table id="table" class="table" data-url="<?= base_url('absences/session_datatable/') . $detail['kode_kegiatan'] ?>">
+								<table id="table" class="table"
+									data-url="<?= base_url('absences/session_datatable/') . $detail['kode_kegiatan'] ?>">
 									<thead>
-										<tr class="text-start fw-bolder fs-7 text-uppercase bg-lighten">
-											<th class="ps-2" style="width: 180px;" scope="col">Title</th>
-											<th>Session</th>
+										<tr class="text-start fw-bolder fs-7 bg-lighten">
+											<th class="number-col text-center" style="width: 20px;" scope="col">No</th>
+											<th class="title-col" style="width: 180px;" scope="col">Title</th>
+											<th class="session-col">Session</th>
 											<th>Status</th>
 											<th class="link-col">Attendance link</th>
-											<th class="action-col"></th>
+											<th class="action-col">action</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -124,16 +126,44 @@
 
 	<script>
 		const table = initDatatable('#table', {
+			lengthMenu: [
+				[5, 25, 50, -1],
+				[5, 25, 50, 'All'],
+			],
 			order: [
 				[0, 'desc']
 			],
 			columnDefs: [{
+				targets: 'number-col',
+				orderable: false,
+				searchable: false,
+				render: function (data, type, row, meta) {
+					return `<div><span class="custom-badge cb-dark">${meta.row + meta.settings._iDisplayStart + 1}</span></div>`
+				}
+			}, {
+				targets: 'title-col',
+				orderable: false,
+				searchable: false,
+				render: function (data, _, row) {
+					return `<h4 class="fw-bolder text-gray-700">${data}</h4>`
+				}
+			}, {
+				targets: 'session-col',
+				orderable: false,
+				searchable: false,
+				render: function (data, _, row) {
+					return `<div style="font-size:11px !important; width:100px;">
+								<p class="mb-1">${data}</p>
+								<p >${row[6]}</p>
+							</div>`
+				}
+			}, {
 				targets: 'link-col',
 				orderable: false,
 				searchable: false,
 				render: function (data, _, row) {
 					return `
-                        <div style="width:160px;" class="d-flex align-items-center">
+                        <div style="width:140px;" class="d-flex align-items-center">
                             <span>
                                  ${data}
                             </span>
@@ -147,23 +177,22 @@
                         </div>
 	                `
 				}
-			},{
+			}, {
 				targets: 'action-col',
 				orderable: false,
 				searchable: false,
 				render: function (data, _, row) {
-					return `
-	                   <div style="width: 90px;" class="d-flex align-items-center"> 
-                           <a class="btn p-2 fw-bolder btn-icon btn-light" href="${base_url}absences/detail/${data}">
-							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-									<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-									<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-								</svg>  
-						   </a>
-	                   </div>
-	                `
+					return `<div style="width: 90px;" class="dropdown">
+								<a class="btn btn-sm btn-secondary dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+									Options
+								</a>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+									<li><a class="dropdown-item" target="_blank" href="#">Download PDF</a></li>
+									<li><a class="dropdown-item" href="#">Manual transfer</a></li>
+								</ul>
+							</div>`
 				}
-			},]
+			}, ]
 		})
 
 		$(document).ready(function () {
@@ -174,7 +203,7 @@
 				$(this).select();
 				navigator.clipboard.writeText(link);
 				showToast('Copied', 'Attendance link copied to clipboard', 'success')
-                $('.link-sample').remove()
+				$('.link-sample').remove()
 			})
 
 			$(document).on('click', '#btn-create-session', function (e) {

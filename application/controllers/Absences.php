@@ -43,9 +43,11 @@ class Absences extends MY_Controller {
 
     public function session_datatable($code_activity)
     {	
-        $this->datatable->select('abs.session_title, abs.valid_when, abs.id as status,abs.attendance_link, abs.id as absence_id');
+        $this->datatable->select('abs.id, abs.session_title, DATE_FORMAT(abs.valid_when, "%d-%m-%Y %H:%i"),
+        abs.id as status,abs.attendance_link, abs.id as absence_id, DATE_FORMAT(abs.valid_until, "%d-%m-%Y %H:%i")');
         $this->datatable->from('absences abs');
         $this->datatable->where('code_activity', $code_activity);
+        $this->datatable->edit_column('status', '$1', 'absence_session_status(status)');
         echo $this->datatable->generate();
     }
 

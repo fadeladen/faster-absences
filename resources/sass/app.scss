@@ -62,3 +62,30 @@ table.dataTable {
     padding: 8px !important;
     width: 65px !important;
 }
+
+.custom-badge {
+    border-radius: 6px;
+    padding: 0.6rem .9rem;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.cb-warning {
+    background-color: #fef3c7;
+    color: #f59e0b;
+}
+
+.cb-success {
+    background-color: #d1fae5;
+    color: #10b981;
+}
+
+.cb-danger {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+.cb-dark {
+    background-color: #e2e8f0;
+    color: #475569;
+}
