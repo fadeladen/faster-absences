@@ -38,7 +38,6 @@
 			</div>
 			<form method="POST" action="<?= base_url('site/absences/store') ?>"
 				id="attendance-form">
-				<input class="d-none" type="text" value="<?= $detail['code_activity'] ?>" name="code_activity" id="code_activity">
 				<input class="d-none" type="text" value="<?= $detail['absence_id'] ?>" name="absence_id" id="absence_id">
 				<div class="modal-body">
 					<div class="row">

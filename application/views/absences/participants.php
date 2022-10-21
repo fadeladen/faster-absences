@@ -1,21 +1,3 @@
-<style>
-	#participants-table thead th {
-		border: 1px solid #eff2f5 !important;
-	}
-
-	.container-xxl {
-		max-width: 1400px !important;
-	}
-
-	.small-file-upload {
-		font-size: 11px !important;
-		display: inline-block;
-		width: 5.7rem;
-		padding: 5px;
-	}
-
-</style>
-
 <div class="post d-flex flex-column-fluid" id="kt_post">
 	<div id="kt_content_container" class="container-xxl px-4">
 		<div class="post d-flex flex-column-fluid" id="kt_post">

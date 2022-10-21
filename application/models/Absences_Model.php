@@ -30,6 +30,14 @@ class Absences_Model extends CI_Model
         ->where('a.code_activity', $code_activity)->get()->row_array();
     }
 
+    function get_absences_by_id($id) {
+        return $this->db->select('dm.activity, mp.advance_number, a.id as absence_id, a.*')
+        ->from('absences a')
+        ->join('tb_detail_monthly dm', 'dm.kode_kegiatan = a.code_activity')
+        ->join('tb_mini_proposal_new mp', 'a.code_activity = mp.code_activity')
+        ->where('a.id', $id)->get()->row_array();
+    }
+
     function get_absences_by_link($link) {
         return $this->db->select('dm.activity, mp.advance_number, a.id as absence_id, a.*, DATE_FORMAT(a.valid_when, "%H:%i, %d %M %Y") as valid_when')
         ->from('absences a')
@@ -50,7 +58,7 @@ class Absences_Model extends CI_Model
         $this->db->insert('absences', $abs_data);
         $absence_id =  $this->db->insert_id();
         $attendance_link = encrypt($absence_id);
-        $attendance_link = substr($attendance_link,0,15);
+        $attendance_link = substr($attendance_link,0,5) . now();
         $this->db->where('id', $absence_id)->update('absences', ['attendance_link' => $attendance_link]);
         $this->db->trans_complete();
         if($this->db->trans_status()) {
@@ -60,14 +68,14 @@ class Absences_Model extends CI_Model
     }
 
     function insert_attendance($payload) {
-        $this->db->insert('tb_event_absence', $payload);
+        $this->db->insert('absence_participants', $payload);
         $attendance_id =  $this->db->insert_id();
         return $attendance_id;
     }
 
     function update_participant_data($id, $payload) {
         $this->db->where('id', $id);
-        $updated = $this->db->update('tb_event_absence', [
+        $updated = $this->db->update('absence_participants', [
             $payload['field'] => $payload['value']
         ]);
         if($updated) {
@@ -79,7 +87,7 @@ class Absences_Model extends CI_Model
     function get_participant_data_by_id($id) {
         return $this->db->select('format(jumlah_konsumsi, 0, "de_DE") as jumlah_konsumsi, format(jumlah_internet, 0, "de_DE") as jumlah_internet,
         format(jumlah_other, 0, "de_DE") as jumlah_other, format(jumlah_konsumsi+jumlah_internet+jumlah_other, 0, "de_DE")  as total, resi_konsumsi, transfer_receipt')
-        ->from('tb_event_absence')
+        ->from('absence_participants')
         ->where('id', $id)->get()->row_array();
     }
 }

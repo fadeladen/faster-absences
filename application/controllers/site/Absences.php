@@ -14,7 +14,7 @@ class Absences extends MY_Controller {
         $detail = $this->absences->get_absences_by_link($link);
 		if($detail) {
 			$data['detail'] = $detail;
-			$status = is_session_expired($detail['absence_id']);
+			$status = absence_session_status($detail['absence_id']);
 			if($status == 'Active') {
 				$this->template->render('absences/absence_form', $data);
 			} else {
@@ -59,7 +59,7 @@ class Absences extends MY_Controller {
 					$response['payload'] = $payload;
 					$response['message'] = 'Data berhasil disimpan!';
 					$response['html'] = '<div class="text-center my-5 py-3 border-bottom">
-											<h1 class="mb-5 pb-2">Terimakasih sudah mengisi form!</h1>
+											<h1 class="mb-5 pb-2">Terimakasih sudah mengisi absen!</h1>
 											<img src="'.base_url('assets/images/svg/submitted.svg').'" style="height: 14rem; width: auto;" alt="">
 										</div>';
 					$status_code = 200;

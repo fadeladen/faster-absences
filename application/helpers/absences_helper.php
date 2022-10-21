@@ -51,8 +51,8 @@ if (!function_exists('absence_session_badge')) {
     }
 }
 
-if (!function_exists('is_session_expired')) {
-    function is_session_expired($id)
+if (!function_exists('absence_session_status')) {
+    function absence_session_status($id)
     {   
         $ci = &get_instance();
         $absences = $ci->db->select('valid_when, valid_until')

@@ -53,8 +53,8 @@ table.dataTable {
 }
 
 .modal-xl {
-    width: 1350px !important;
-    max-width: 1350px !important;
+    width: 1400px !important;
+    max-width: 1400px !important;
 }
 
 .small-input {
@@ -88,4 +88,15 @@ table.dataTable {
 .cb-dark {
     background-color: #e2e8f0;
     color: #475569;
+}
+
+#participants-table thead th {
+    border: 1px solid #eff2f5 !important;
+}
+
+.small-file-upload {
+    font-size: 11px !important;
+    display: inline-block;
+    width: 5.7rem;
+    padding: 5px;
 }
