@@ -80,7 +80,7 @@ class Absences extends MY_Controller {
             END) AS jenis_kelamin, asal_layanan,email_peserta,
         payment_method, format(jumlah_konsumsi, 0, "de_DE") as jumlah_konsumsi, format(jumlah_internet, 0, "de_DE") as internet_fee,
         format(jumlah_other, 0, "de_DE") as other_fee, format(jumlah_konsumsi+jumlah_internet+jumlah_other, 0, "de_DE")  as total, 
-        resi_konsumsi, ovo_number, gopay_number, bank_name, bank_number, transfer_receipt, phone_number, nama_lembaga, id as input, is_email_send');
+        resi_konsumsi, ovo_number, gopay_number, bank_name, bank_number, transfer_receipt, phone_number, nama_lembaga, id as input, is_email_send, absence_id');
         $this->datatable->from('absence_participants');
         $this->datatable->where('absence_id', $absence_id);
         echo $this->datatable->generate();
@@ -165,7 +165,7 @@ class Absences extends MY_Controller {
     }
 
     public function get_total_participants_reimbursement($absence_id) {
-        if ($this->input->is_ajax_request()) {
+        // if ($this->input->is_ajax_request()) {
             $data = $this->db->select('format(sum(jumlah_konsumsi), 0, "de_DE") as total_konsumsi,
             format(sum(jumlah_internet), 0, "de_DE") as total_internet, format(sum(jumlah_other), 0, "de_DE") as total_other,
             format(sum(jumlah_other+jumlah_internet+jumlah_konsumsi), 0, "de_DE") as total')
@@ -182,9 +182,9 @@ class Absences extends MY_Controller {
                 $status_code = 400;
             }
             $this->send_json($response, $status_code);
-        } else {
-            show_404();
-        }
+        // } else {
+        //     show_404();
+        // }
     }
 
     public function submit_participant_reimbursement($participant_id) {

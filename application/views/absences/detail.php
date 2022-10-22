@@ -251,7 +251,6 @@
 					},
 					success: function (response) {
 						const data = response.data
-						console.log(response)
 						if (response.success) {
 							$('#total_meal').text(data.total_konsumsi)
 							$('#total_internet').text(data.total_internet)
@@ -309,28 +308,28 @@
 									orderable: false,
 									searchable: false,
 									render: function (data, _, row) {
-										return `<input type="text" data-field="jumlah_konsumsi" value="${data}" class="form-control meal-input small-input" data-id="${row[18]}">`
+										return `<input type="text" data-field="jumlah_konsumsi" value="${data}" class="form-control meal-input small-input" data-id="${row[18]}" data-absence-id="${row[20]}">`
 									}
 								}, {
 									targets: ['internet-col'],
 									orderable: false,
 									searchable: false,
 									render: function (data, _, row) {
-										return `<input type="text" data-field="jumlah_internet" value="${data}" class="form-control internet-input small-input" data-id="${row[18]}">`
+										return `<input type="text" data-field="jumlah_internet" value="${data}" class="form-control internet-input small-input" data-id="${row[18]}" data-absence-id="${row[20]}">`
 									}
 								}, {
 									targets: ['other-col'],
 									orderable: false,
 									searchable: false,
 									render: function (data, _, row) {
-										return `<input type="text" data-field="jumlah_other" value="${data}" class="form-control other-input small-input" data-id="${row[18]}">`
+										return `<input type="text" data-field="jumlah_other" value="${data}" class="form-control other-input small-input" data-id="${row[18]}" data-absence-id="${row[20]}">`
 									}
 								}, {
 									targets: ['total-col'],
 									orderable: false,
 									searchable: false,
 									render: function (data, _, row) {
-										return `<input type="text" value="${data}" class="form-control total-input small-input" disabled data-id="${row[18]}">`
+										return `<input type="text" value="${data}" class="form-control total-input small-input" disabled data-id="${row[18]}" data-absence-id="${row[20]}">`
 									}
 								}, {
 									targets: 'payment-col',
@@ -598,6 +597,7 @@
 								const value = $(this).val()
 								const field = $(this).attr('data-field')
 								const id = $(this).attr('data-id')
+								const abs_id = $(this).attr('data-absence-id')
 								$.ajax({
 									type: 'POST',
 									url: base_url + 'absences/update_participant/' + id,
@@ -614,7 +614,7 @@
 											$this.parent().parent().find('.total-input')
 												.val(response
 													.data.total)
-											updateTotalField(absence_id)
+											updateTotalField(abs_id)
 										}
 									},
 								});
