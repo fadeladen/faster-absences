@@ -25,10 +25,17 @@ class Absences extends MY_Controller {
         $detail = $this->absences->get_activity_detail($code_activity);
         $total_absence = $this->db->select('count(id) as total')->from('absences')->where('code_activity', $code_activity)->get()->row()->total;
         $detail['total_absences'] = $total_absence;
+        $total_advance = $this->absences->get_total_advance($code_activity);
+        $detail['total_advance'] = number_format($total_advance,0,'','.');
         $data['detail'] = $detail;
 		$this->template->set('page', 'Absences detail');
         $this->template->render('absences/detail', $data);
 	}
+
+    public function test() {
+        $total_advance = $this->absences->get_total_advance(4500001);
+        echo json_encode($total_advance);
+    }
 
     public function data() {
 		$this->template->set('page', 'Internet, local transport & fee');
@@ -165,7 +172,7 @@ class Absences extends MY_Controller {
     }
 
     public function get_total_participants_reimbursement($absence_id) {
-        // if ($this->input->is_ajax_request()) {
+        if ($this->input->is_ajax_request()) {
             $data = $this->db->select('format(sum(jumlah_konsumsi), 0, "de_DE") as total_konsumsi,
             format(sum(jumlah_internet), 0, "de_DE") as total_internet, format(sum(jumlah_other), 0, "de_DE") as total_other,
             format(sum(jumlah_other+jumlah_internet+jumlah_konsumsi), 0, "de_DE") as total')
@@ -182,9 +189,9 @@ class Absences extends MY_Controller {
                 $status_code = 400;
             }
             $this->send_json($response, $status_code);
-        // } else {
-        //     show_404();
-        // }
+        } else {
+            show_404();
+        }
     }
 
     public function submit_participant_reimbursement($participant_id) {

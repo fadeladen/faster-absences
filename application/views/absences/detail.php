@@ -1,5 +1,4 @@
 <style>
-
 	.range {
 		width: 180px;
 		height: 12px;
@@ -103,11 +102,30 @@
 										</div>
 									</div>
 									<div class="text-center pt-5 my-5">
-										<h1 class="fw-bolder text-gray-800 mb-1">2 of <?= $detail['total_absences'] ?></h1>
+										<h1 class="fw-bolder text-gray-800 mb-1"><?= total_expired_absences($detail['kode_kegiatan']) ?> of <span id="count_absences"><?= $detail['total_absences'] ?></span>
+										</h1>
 										<small class="text-muted fw-bold fs-6">Event Expired</small>
 										<div class="range-container mt-2">
-											<Input class="range" type="range" value="2" min="0" max="<?= $detail['total_absences'] ?>">
+											<Input id="range-total-absences" class="range" type="range" value="<?= total_expired_absences($detail['kode_kegiatan']) ?>" min="0"
+												max="<?= $detail['total_absences'] ?>">
 											</Input>
+										</div>
+									</div>
+									<div class="d-flex align-items-center mb-5 mt-5">
+										<span class="icon-badge cb-dark">
+											<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+												fill="currentColor" class="bi bi-bar-chart-fill" viewBox="0 0 16 16">
+												<path
+													d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2z" />
+											</svg>
+										</span>
+										<div class="ms-5">
+											<div class="fw-bolder text-gray-800 fs-5">
+												Rp. <?= $detail['total_advance'] ?>
+											</div>
+											<div class="text-muted fw-bold d-flex flex-column">
+												Advance Used
+											</div>
 										</div>
 									</div>
 								</div>

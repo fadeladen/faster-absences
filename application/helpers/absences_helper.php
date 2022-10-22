@@ -40,7 +40,7 @@ if (!function_exists('absence_session_badge')) {
         if($now > $absences['valid_when'] && $now < $absences['valid_until']) {
             $status = 'Active';
             $color = 'cb-success';
-        } else if ($now > $absences['valid_when'])  {
+        } else if ($now > $absences['valid_until'])  {
             $status = 'Expired'; 
             $color = 'cb-danger';
         } else if($now < $absences['valid_when']) {
@@ -62,11 +62,39 @@ if (!function_exists('absence_session_status')) {
         $now = date('Y-m-d H:i:s');   
         if($now > $absences['valid_when'] && $now < $absences['valid_until']) {
             $status = 'Active';
-        } else if ($now > $absences['valid_when'])  {
+        } else if ($now > $absences['valid_until'])  {
             $status = 'Expired'; 
         } else if($now < $absences['valid_when']) {
             $status = 'Coming';
         }
         return $status;
+    }
+}
+
+if (!function_exists('total_expired_absences')) {
+    function total_expired_absences($code_activity)
+    {   
+        $ci = &get_instance();
+        $absences = $ci->db->select('valid_when, valid_until')
+        ->from('absences a')
+        ->where('code_activity', $code_activity)
+        ->get()->result_array();
+        $now = date('Y-m-d H:i:s');
+        $total = 0;   
+        foreach($absences as $abs) {
+            if($now > $abs['valid_until']) {
+                $total += 1;
+            }
+        }
+        return $total;
+    }
+}
+
+if (!function_exists('count_absences')) {
+    function count_absences($code_activity)
+    {   
+        $ci = &get_instance();
+        $total_absence = $ci->db->select('count(id) as total')->from('absences')->where('code_activity', $code_activity)->get()->row()->total;
+        return $total_absence;
     }
 }

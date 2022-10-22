@@ -10,7 +10,7 @@
 			<div class="modal-body">
 				<div class="form-group mb-3">
 					<label for="actual_">Session title</label>
-					<input type="text" class="form-control mt-2" id="session_title" name="session_title">
+					<input placeholder="Enter session title" type="text" class="form-control mt-2" id="session_title" name="session_title">
 				</div>
 				<!-- <div class="form-group mb-3">
 					<label for="actual_">Actual date of activity</label>

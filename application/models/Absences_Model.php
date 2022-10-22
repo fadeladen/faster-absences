@@ -106,4 +106,16 @@ class Absences_Model extends CI_Model
         ->from('absence_participants')
         ->where('id', $id)->get()->row_array();
     }
+
+    function get_total_advance($code_activity) {
+        $advances = $this->db->select('(jumlah_konsumsi+jumlah_internet+jumlah_other) as total')
+        ->from('absence_participants ap')
+        ->join('absences a', 'a.id = ap.absence_id')
+        ->where('a.code_activity', $code_activity)->get()->result_array();
+        $total = 0;
+        foreach($advances as $adv) {
+            $total += $adv['total'];
+        }
+        return $total;
+    }
 }
