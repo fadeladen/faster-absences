@@ -130,7 +130,8 @@
 								</div>
 							</div>
 							<div class="card-body pt-4">
-								<input type="text" class="d-none" value="<?= $detail['kode_kegiatan'] ?>" id="code_activity">
+								<input type="text" class="d-none" value="<?= $detail['kode_kegiatan'] ?>"
+									id="code_activity">
 								<table id="table" class="table"
 									data-url="<?= base_url('absences/session_datatable/') . $detail['kode_kegiatan'] ?>">
 									<thead>
@@ -182,8 +183,7 @@
 				orderable: false,
 				searchable: false,
 				render: function (data, _, row) {
-					console.log(row[8])
-					if(row[8] == 2) {
+					if (row[8] == 2) {
 						return '-'
 					}
 					return `<div style="font-size:11px !important; width:105px;">
@@ -194,7 +194,7 @@
 			}, {
 				targets: 'status-col',
 				render: function (data, _, row) {
-					if(row[8] == 2) {
+					if (row[8] == 2) {
 						return '-'
 					}
 					return `${data}`
@@ -204,7 +204,7 @@
 				orderable: false,
 				searchable: false,
 				render: function (data, _, row) {
-					if(row[8] == 2) {
+					if (row[8] == 2) {
 						return '-'
 					}
 					return `
@@ -229,10 +229,12 @@
 				render: function (data, _, row) {
 					let link = `<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/participants_list_by_session/${row[7]}">Download PDF</a></li>
 								<li><a class="dropdown-item btn-participants" data-id="${data}" href="#">Manual transfer</a></li>`
-					if(row[8] == 2) {
-						link = `<li><a class="dropdown-item" target="_blank" href="${base_url}absences/qrcode/${code_activity}?session=${row[1]}&size=10">Download QR Code</a></li>`
-					} else if(row[8] == 3) {
-						link += `<li><a class="dropdown-item" target="_blank" href="${base_url}absences/qrcode/${code_activity}?session=${row[1]}&size=10">Download QR Code</a></li>`
+					if (row[8] == 2) {
+						link =
+							`<li><a class="dropdown-item" target="_blank" href="${base_url}absences/qrcode/${code_activity}?session=${row[1]}&size=10">Download QR Code</a></li>`
+					} else if (row[8] == 3) {
+						link +=
+							`<li><a class="dropdown-item" target="_blank" href="${base_url}absences/qrcode/${code_activity}?session=${row[1]}&size=10">Download QR Code</a></li>`
 					}
 					return `<div style="width: 90px;" class="dropdown">
 								<a class="btn btn-sm bg-lighten text-muted dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
@@ -262,7 +264,8 @@
 				const code_activity = $('#code_activity').val()
 				$.ajax({
 					type: 'GET',
-					url: base_url + `absences/getQrCode?code_activity=${code_activity}&session_title=${session_title}`,
+					url: base_url +
+						`absences/getQrCode?code_activity=${code_activity}&session_title=${session_title}`,
 					error: function (xhr) {
 						const response = xhr.responseJSON;
 						console.log(response)
@@ -288,7 +291,7 @@
 				$('#qr_code_image').attr('src', url + '&size=3')
 				$('#qr_pdf').attr('href', url)
 				$('#qr_link').attr('data-url', url)
-			} 
+			}
 			const updateTotalField = (absence_id) => {
 				$.ajax({
 					type: 'GET',
@@ -317,6 +320,11 @@
 						$('#myModal').html(html).modal('show')
 						const assets_url = "<?= $_ENV['ASSETS_URL'] ?>"
 						const assets_token = "<?= $_ENV['ASSETS_TOKEN'] ?>"
+						const is_submitted = $('#is_submitted').val()
+						let input_disabled = ''
+						if(is_submitted == 1) {
+							input_disabled = 'disabled'
+						}
 						const participantsTable = initDatatable('#participants-table', {
 							order: [
 								[0, 'desc']
@@ -324,13 +332,12 @@
 							columnDefs: [{
 									targets: [0],
 									render: function (data, _, row, meta) {
-										return meta.row + meta.settings._iDisplayStart +
-											1;
+										return `<div class="text-center">${meta.row + meta.settings._iDisplayStart +1}</div`
 									}
 								}, {
 									targets: [2],
 									render: function (data, _, row) {
-										return `<div style="width: 60px !important; font-size: 12px;">${data}</div>`
+										return `<div style="width: 65px !important; font-size: 11px;">${data}</div>`
 									}
 								}, {
 									targets: [1],
@@ -357,21 +364,21 @@
 									orderable: false,
 									searchable: false,
 									render: function (data, _, row) {
-										return `<input type="text" data-field="jumlah_konsumsi" value="${data}" class="form-control meal-input small-input" data-id="${row[18]}" data-absence-id="${row[20]}">`
+										return `<input type="text" data-field="jumlah_konsumsi" value="${data}" class="form-control meal-input small-input" ${input_disabled} data-id="${row[18]}" data-absence-id="${row[20]}">`
 									}
 								}, {
 									targets: ['internet-col'],
 									orderable: false,
 									searchable: false,
 									render: function (data, _, row) {
-										return `<input type="text" data-field="jumlah_internet" value="${data}" class="form-control internet-input small-input" data-id="${row[18]}" data-absence-id="${row[20]}">`
+										return `<input type="text" data-field="jumlah_internet" value="${data}" class="form-control internet-input small-input" ${input_disabled} data-id="${row[18]}" data-absence-id="${row[20]}">`
 									}
 								}, {
 									targets: ['other-col'],
 									orderable: false,
 									searchable: false,
 									render: function (data, _, row) {
-										return `<input type="text" data-field="jumlah_other" value="${data}" class="form-control other-input small-input" data-id="${row[18]}" data-absence-id="${row[20]}">`
+										return `<input type="text" data-field="jumlah_other" value="${data}" class="form-control other-input small-input" ${input_disabled} data-id="${row[18]}" data-absence-id="${row[20]}">`
 									}
 								}, {
 									targets: ['total-col'],
@@ -718,6 +725,60 @@
 												if (result.value) {
 													participantsTable
 														.draw(false)
+												}
+											})
+										},
+									});
+								}
+							})
+						})
+						$(document).on('click', '#btn-submit-absence', function (e) {
+							const absence_id = $(this).attr('data-id')
+							const loader = `<div style="width: 5rem; height: 5rem;" class="spinner-border mb-5" role="status"></div>
+							<h5 class="mt-2">Please wait</h5>
+							<p>Submiting absence...</p>`
+							Swal.fire({
+								title: `Submit absence?`,
+								text: "",
+								icon: 'warning',
+								showCancelButton: true,
+								confirmButtonColor: '#009EF7',
+								cancelButtonColor: '#F1416C',
+								confirmButtonText: `Yes!`
+							}).then((result) => {
+								if (result.value) {
+									$.ajax({
+										type: 'POST',
+										url: base_url +
+											'absences/submit_absences/' + absence_id,
+										beforeSend: function () {
+											Swal.fire({
+												html: loader,
+												showConfirmButton: false,
+												allowEscapeKey: false,
+												allowOutsideClick: false,
+											});
+										},
+										error: function (xhr) {
+											const response = xhr.responseJSON;
+											Swal.fire({
+												"title": response
+													.message,
+												"text": '',
+												"icon": "error",
+												"confirmButtonColor": '#000',
+											});
+										},
+										success: function (response) {
+											Swal.fire({
+												"title": "Success!",
+												"text": response
+													.message,
+												"icon": "success",
+												"confirmButtonColor": '#000',
+											}).then((result) => {
+												if (result.value) {
+													participantsTable.draw(false)
 												}
 											})
 										},

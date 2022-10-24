@@ -253,6 +253,22 @@ class Absences extends MY_Controller {
 		}
     }
 
+    public function submit_absences($absence_id) {
+        if ($this->input->is_ajax_request()) {
+            $updated = $this->absences->submit_absences($absence_id);
+            if($updated) {
+                $response['message'] = 'Absence has been submitted!';
+                $status_code = 200;
+            } else {
+                $response['message'] = 'Something went wrong, please try again later!';
+                $status_code = 400;
+            }
+            $this->send_json($response, $status_code);
+        } else {
+            show_404();
+        }
+    }
+
     public function qrcode($code) {
         $session = $this->input->get('session');
         $size = $this->input->get('size');

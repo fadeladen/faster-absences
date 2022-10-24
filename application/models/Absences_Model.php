@@ -118,4 +118,16 @@ class Absences_Model extends CI_Model
         }
         return $total;
     }
+
+    function submit_absences($absence_id) {
+        $updated = $this->db->where('id', $absence_id)
+            ->update('absences', [
+                'is_submitted' => 1,
+                'submitted_at' => date('Y-m-d H:i:s')
+            ]);
+        if($updated) {
+            return true;
+        }
+        return false;
+    }
 }

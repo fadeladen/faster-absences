@@ -75,14 +75,14 @@ if (!function_exists('total_expired_absences')) {
     function total_expired_absences($code_activity)
     {   
         $ci = &get_instance();
-        $absences = $ci->db->select('valid_when, valid_until')
+        $absences = $ci->db->select('valid_when, valid_until, kind_of_meeting')
         ->from('absences a')
         ->where('code_activity', $code_activity)
         ->get()->result_array();
         $now = date('Y-m-d H:i:s');
         $total = 0;   
         foreach($absences as $abs) {
-            if($now > $abs['valid_until']) {
+            if($now > $abs['valid_until'] && $abs['kind_of_meeting'] != 2) {
                 $total += 1;
             }
         }
