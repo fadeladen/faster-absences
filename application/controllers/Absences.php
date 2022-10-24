@@ -32,11 +32,6 @@ class Absences extends MY_Controller {
         $this->template->render('absences/detail', $data);
 	}
 
-    public function test() {
-        $total_advance = $this->absences->get_total_advance(4500001);
-        echo json_encode($total_advance);
-    }
-
     public function data() {
 		$this->template->set('page', 'Internet, local transport & fee');
         $this->template->render('absences/data');
@@ -54,7 +49,7 @@ class Absences extends MY_Controller {
     public function session_datatable($code_activity)
     {	
         $this->datatable->select('abs.id, abs.session_title, DATE_FORMAT(abs.valid_when, "%d-%m-%Y %H:%i") as valid_when,
-        abs.id as status, abs.attendance_link, abs.id as absence_id, DATE_FORMAT(abs.valid_until, "%d-%m-%Y %H:%i"), abs.id as enc_id');
+        abs.id as status, abs.attendance_link, abs.id as absence_id, DATE_FORMAT(abs.valid_until, "%d-%m-%Y %H:%i"), abs.id as enc_id, abs.kind_of_meeting');
         $this->datatable->from('absences abs');
         $this->datatable->where('code_activity', $code_activity);
         $this->datatable->edit_column('status', '$1', 'absence_session_badge(status)');
@@ -256,6 +251,43 @@ class Absences extends MY_Controller {
 		} else {
 			return false;
 		}
+    }
+
+    public function qrcode($code) {
+        $session = $this->input->get('session');
+        $size = $this->input->get('size');
+        if(!$size || $size == '') {
+            $size = 10;
+        }
+        $code = 'Absen Kegiatan ' . $code; 
+        if($session || $session != '') {
+            $code = $code . ' Sesi: ' . $session;
+        }
+        $this->load->library('ciqrcode');
+        QrCode::png(
+            $code,
+            $outfile = false,
+            $level = QR_ECLEVEL_H,
+            $size,
+            $margin = 2
+        );
+    }
+
+    public function getQrCode() {
+        if ($this->input->is_ajax_request()) {
+            $code_activity = $this->input->get('code_activity');
+            $session_title = $this->input->get('session_title');
+            $size = $this->input->get('size');
+            if(!$size || $size == '') {
+                $size = 10;
+            }
+            $response['qrcode_url'] = base_url('absences/qrcode/' . $code_activity . '?session=' . $session_title . '&size=' . $size);
+            $response['success'] = true;
+            $status_code = 200;
+            $this->send_json($response, $status_code);
+        } else {
+            show_404();
+        }
     }
 
 }

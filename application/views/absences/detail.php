@@ -1,26 +1,3 @@
-<style>
-	.range {
-		width: 180px;
-		height: 12px;
-		-webkit-appearance: none;
-		background: #fee2e2;
-		outline: none;
-		border-radius: 15px;
-		overflow: hidden;
-	}
-
-	.range::-webkit-slider-thumb {
-		-webkit-appearance: none;
-		width: 15px;
-		height: 15px;
-		border-radius: 50%;
-		background: #ef4444;
-		cursor: pointer;
-		box-shadow: -407px 0 0 400px #ef4444;
-	}
-
-</style>
-
 <div class="post d-flex flex-column-fluid" id="kt_post">
 	<div id="kt_content_container" class="container-xxl px-4">
 		<div class="post d-flex flex-column-fluid" id="kt_post">
@@ -102,11 +79,14 @@
 										</div>
 									</div>
 									<div class="text-center pt-5 my-5">
-										<h1 class="fw-bolder text-gray-800 mb-1"><?= total_expired_absences($detail['kode_kegiatan']) ?> of <span id="count_absences"><?= $detail['total_absences'] ?></span>
+										<h1 class="fw-bolder text-gray-800 mb-1">
+											<?= total_expired_absences($detail['kode_kegiatan']) ?> of <span
+												id="count_absences"><?= $detail['total_absences'] ?></span>
 										</h1>
 										<small class="text-muted fw-bold fs-6">Event Expired</small>
 										<div class="range-container mt-2">
-											<Input id="range-total-absences" class="range" type="range" value="<?= total_expired_absences($detail['kode_kegiatan']) ?>" min="0"
+											<Input id="range-total-absences" class="range" type="range"
+												value="<?= total_expired_absences($detail['kode_kegiatan']) ?>" min="0"
 												max="<?= $detail['total_absences'] ?>">
 											</Input>
 										</div>
@@ -150,6 +130,7 @@
 								</div>
 							</div>
 							<div class="card-body pt-4">
+								<input type="text" class="d-none" value="<?= $detail['kode_kegiatan'] ?>" id="code_activity">
 								<table id="table" class="table"
 									data-url="<?= base_url('absences/session_datatable/') . $detail['kode_kegiatan'] ?>">
 									<thead>
@@ -175,6 +156,7 @@
 	</div>
 
 	<script>
+		const code_activity = $('#code_activity').val()
 		const table = initDatatable('#table', {
 			lengthMenu: [
 				[5, 25, 50, -1],
@@ -200,7 +182,11 @@
 				orderable: false,
 				searchable: false,
 				render: function (data, _, row) {
-					return `<div style="font-size:11px !important; width:100px;">
+					console.log(row[8])
+					if(row[8] == 2) {
+						return '-'
+					}
+					return `<div style="font-size:11px !important; width:105px;">
 								<p class="mb-1">${data}</p>
 								<p class="mb-0">${row[6]}</p>
 							</div>`
@@ -208,6 +194,9 @@
 			}, {
 				targets: 'status-col',
 				render: function (data, _, row) {
+					if(row[8] == 2) {
+						return '-'
+					}
 					return `${data}`
 				}
 			}, {
@@ -215,6 +204,9 @@
 				orderable: false,
 				searchable: false,
 				render: function (data, _, row) {
+					if(row[8] == 2) {
+						return '-'
+					}
 					return `
                         <div style="width:140px;" class="d-flex align-items-center">
                             <span>
@@ -235,13 +227,19 @@
 				orderable: false,
 				searchable: false,
 				render: function (data, _, row) {
+					let link = `<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/participants_list_by_session/${row[7]}">Download PDF</a></li>
+								<li><a class="dropdown-item btn-participants" data-id="${data}" href="#">Manual transfer</a></li>`
+					if(row[8] == 2) {
+						link = `<li><a class="dropdown-item" target="_blank" href="${base_url}absences/qrcode/${code_activity}?session=${row[1]}&size=10">Download QR Code</a></li>`
+					} else if(row[8] == 3) {
+						link += `<li><a class="dropdown-item" target="_blank" href="${base_url}absences/qrcode/${code_activity}?session=${row[1]}&size=10">Download QR Code</a></li>`
+					}
 					return `<div style="width: 90px;" class="dropdown">
 								<a class="btn btn-sm bg-lighten text-muted dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
 									Options
 								</a>
 								<ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-									<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/participants_list_by_session/${row[7]}">Download PDF</a></li>
-									<li><a class="dropdown-item btn-participants" data-id="${data}" href="#">Manual transfer</a></li>
+									${link}
 								</ul>
 							</div>`
 				}
@@ -258,6 +256,39 @@
 				showToast('Copied', 'Attendance link copied to clipboard', 'success')
 				$('.link-sample').remove()
 			})
+			$(document).on('keyup', '#session_title', function (e) {
+				$('.small-input').number(true, 0, '', '.')
+				const session_title = $(this).val()
+				const code_activity = $('#code_activity').val()
+				$.ajax({
+					type: 'GET',
+					url: base_url + `absences/getQrCode?code_activity=${code_activity}&session_title=${session_title}`,
+					error: function (xhr) {
+						const response = xhr.responseJSON;
+						console.log(response)
+					},
+					success: function (response) {
+						console.log(response)
+						if (response.success) {
+							updateQrCode(response.qrcode_url)
+						}
+					},
+				});
+			})
+			$(document).on('click', '#qr_link', function (e) {
+				var $temp = $("<input class='link-sample'>");
+				$("body").append($temp);
+				const link = `${$(this).attr('data-url')}`
+				$(this).select();
+				navigator.clipboard.writeText(link);
+				showToast('Copied', 'QR code link copied to clipboard', 'success')
+				$('.link-sample').remove()
+			})
+			const updateQrCode = (url) => {
+				$('#qr_code_image').attr('src', url + '&size=3')
+				$('#qr_pdf').attr('href', url)
+				$('#qr_link').attr('data-url', url)
+			} 
 			const updateTotalField = (absence_id) => {
 				$.ajax({
 					type: 'GET',

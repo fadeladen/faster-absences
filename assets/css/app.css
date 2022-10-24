@@ -12055,3 +12055,23 @@ table.dataTable {
   width: 6rem !important;
   padding: 6px !important;
 }
+
+.range {
+  width: 180px;
+  height: 12px;
+  -webkit-appearance: none;
+  background: #fee2e2;
+  outline: none;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #ef4444;
+  cursor: pointer;
+  box-shadow: -407px 0 0 400px #ef4444;
+}
