@@ -237,8 +237,8 @@
 				orderable: false,
 				searchable: false,
 				render: function (data, _, row) {
-					let link = `<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/participants_list_by_session/${row[8]}">Download PDF</a></li>
-								<li><a class="dropdown-item btn-participants" data-id="${data}" href="#">Manual transfer</a></li>`
+					let link = `<li><a class="dropdown-item btn-participants" data-id="${data}" href="#">Manual transfer</a></li>
+					<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/participants_list_by_session/${row[8]}">Download PDF</a></li>`
 					if (row[9] == 2 || row[9] == 3) {
 						link +=
 							`<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/qrcode/${row[8]}">Download QR Code</a></li>`
@@ -742,9 +742,10 @@
 							const absence_id = $(this).attr('data-id')
 							const loader = `<div style="width: 5rem; height: 5rem;" class="spinner-border mb-5" role="status"></div>
 							<h5 class="mt-2">Please wait</h5>
-							<p>Submiting absence...</p>`
+							<p>Submiting payment...</p>`
+							const $this = $(this)
 							Swal.fire({
-								title: `Submit absence?`,
+								title: `Submit payment?`,
 								text: "",
 								icon: 'warning',
 								showCancelButton: true,
@@ -756,7 +757,7 @@
 									$.ajax({
 										type: 'POST',
 										url: base_url +
-											'absences/submit_absences/' +
+											'absences/submit_payment/' +
 											absence_id,
 										beforeSend: function () {
 											Swal.fire({
@@ -784,10 +785,12 @@
 												"icon": "success",
 												"confirmButtonColor": '#000',
 											}).then((result) => {
+												$this.attr('disabled', true)
+												$this.parent().parent().find('.small-input').attr('disabled', true)
 												if (result.value) {
-													participantsTable
-														.draw(false)
+													$('#myModal').modal('hide')
 												}
+												table.draw()
 											})
 										},
 									});

@@ -262,7 +262,7 @@ class Absences extends MY_Controller {
         if ($this->input->is_ajax_request()) {
             $updated = $this->absences->submit_payment($absence_id);
             if($updated) {
-                $response['message'] = 'Absence has been submitted!';
+                $response['message'] = 'Payment has been submitted!';
                 $status_code = 200;
             } else {
                 $response['message'] = 'Something went wrong, please try again later!';

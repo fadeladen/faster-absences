@@ -119,10 +119,15 @@ class Absences_Model extends CI_Model
     }
 
     function submit_payment($absence_id) {
+        $total_advance = $this->db->select('sum(jumlah_other+jumlah_internet+jumlah_konsumsi) as total')
+            ->get_where('absence_participants', [
+                'absence_id' => $absence_id
+            ])->row()->total;
         $updated = $this->db->where('id', $absence_id)
             ->update('absences', [
                 'is_submitted' => 1,
-                'submitted_at' => date('Y-m-d H:i:s')
+                'submitted_at' => date('Y-m-d H:i:s'),
+                'total_advance' => $total_advance
             ]);
         if($updated) {
             return true;
