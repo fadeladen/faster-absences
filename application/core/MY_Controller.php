@@ -32,6 +32,15 @@ class MY_Controller extends CI_Controller
             ->set_output(json_encode(array_merge($data, ['code' => $status_code])));
     }
 
+    
+    function generate_link() {
+        $id = $this->db->select('id')->from('absences')->order_by('id', 'desc')->get()->row()->id;
+        $id += 1;
+        $link = encrypt($id);
+        $link = substr($link,0,5) . now();
+        return $link;
+    }
+
     function send_reimbursement_email($reimbursement_id, $target, $level, $email_text, $need_confirm = true) {
         $this->load->library('Phpmailer_library');
         $mail = $this->phpmailer_library->load();

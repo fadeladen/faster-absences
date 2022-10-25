@@ -33,4 +33,18 @@ class Documents extends MY_Controller {
 		$file_name = 'Attendance_List_' . now() .'.pdf';
         $html2pdf->output($file_name, 'I');
     }
+
+    public function qrcode($absence_id)
+    {
+        $absence_id = decrypt($absence_id);
+        $data['detail'] = $this->absences->get_absences_by_id($absence_id);
+        $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'en', true, 'UTF-8', array(5, 5, 5, 5));
+		// echo json_encode($data);
+		$html = $this->load->view('template/qrcode', $data, TRUE);
+		$html2pdf->setTestTdInOnePage(false);
+		$html2pdf->writeHTML($html);
+        $html2pdf->pdf->SetDisplayMode('fullpage');
+		$file_name = 'QRCODE_' . now() .'.pdf';
+        $html2pdf->output($file_name, 'I');
+    }
 }

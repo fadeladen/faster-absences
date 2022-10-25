@@ -9,6 +9,8 @@ class Absences_Model extends CI_Model
         "valid_when",
         "valid_until",
         "created_by",
+        "attendance_link",
+        "qr_file",
     ];
 
     function get_activity_detail($code_activity) {
@@ -73,9 +75,6 @@ class Absences_Model extends CI_Model
         $abs_data['valid_until'] = date("$valid_until_date $valid_until_time");
         $this->db->insert('absences', $abs_data);
         $absence_id =  $this->db->insert_id();
-        $attendance_link = encrypt($absence_id);
-        $attendance_link = substr($attendance_link,0,5) . now();
-        $this->db->where('id', $absence_id)->update('absences', ['attendance_link' => $attendance_link]);
         $this->db->trans_complete();
         if($this->db->trans_status()) {
             return $absence_id;

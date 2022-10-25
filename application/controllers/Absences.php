@@ -40,6 +40,9 @@ class Absences extends MY_Controller {
     public function create() {
         if ($this->input->is_ajax_request()) {
 			$data['activity_code'] = $this->input->get('activity_code');
+            $link = $this->generate_link();
+            $data['attendance_link'] = $link;
+            $data['qr_file'] = $link . '.png';
 			$this->load->view('absences/create_modal', $data);
 		} else {
 			show_404();
@@ -49,7 +52,8 @@ class Absences extends MY_Controller {
     public function session_datatable($code_activity)
     {	
         $this->datatable->select('abs.id, abs.session_title, DATE_FORMAT(abs.valid_when, "%d-%m-%Y %H:%i") as valid_when,
-        abs.id as status, abs.attendance_link, abs.id as absence_id, DATE_FORMAT(abs.valid_until, "%d-%m-%Y %H:%i"), abs.id as enc_id, abs.kind_of_meeting');
+        abs.id as status, abs.attendance_link, abs.id as absence_id, DATE_FORMAT(abs.valid_until, "%d-%m-%Y %H:%i"),
+        abs.id as enc_id, abs.kind_of_meeting');
         $this->datatable->from('absences abs');
         $this->datatable->where('code_activity', $code_activity);
         $this->datatable->edit_column('status', '$1', 'absence_session_badge(status)');
@@ -90,14 +94,15 @@ class Absences extends MY_Controller {
 
     public function store() {
 		$this->form_validation->set_rules('kind_of_meeting', 'Kind of meeting', 'required');
+        $this->form_validation->set_rules('session_title', 'Meeting link', 'required');
+        $this->form_validation->set_rules('valid_until_date', 'When date', 'required');
+        $this->form_validation->set_rules('valid_until_time', 'When time', 'required');
+        $this->form_validation->set_rules('valid_when_date', 'Until date', 'required');
+        $this->form_validation->set_rules('valid_when_time', 'Until time', 'required');
+		$this->form_validation->set_rules('qr_file', 'QR File', 'required');
 		$kind_of_meeting = $this->input->post('kind_of_meeting');
 		if($kind_of_meeting == '1' || $kind_of_meeting == '3') {
-			$this->form_validation->set_rules('session_title', 'Meeting link', 'required');
 			$this->form_validation->set_rules('meeting_link', 'Meeting link', 'required');
-			$this->form_validation->set_rules('valid_until_date', 'When date', 'required');
-			$this->form_validation->set_rules('valid_until_time', 'When time', 'required');
-			$this->form_validation->set_rules('valid_when_date', 'Until date', 'required');
-			$this->form_validation->set_rules('valid_when_time', 'Until time', 'required');
 		}
 
 		if ($this->form_validation->run()) {
@@ -269,38 +274,35 @@ class Absences extends MY_Controller {
         }
     }
 
-    public function qrcode($code) {
-        $session = $this->input->get('session');
+    public function qrcode($attendance_link) {
         $size = $this->input->get('size');
         if(!$size || $size == '') {
-            $size = 10;
+            $size = 7;
         }
-        $code = 'Absen Kegiatan ' . $code; 
-        if($session || $session != '') {
-            $code = $code . ' Sesi: ' . $session;
-        }
+        $code = base_url('site/absences/form/' . $attendance_link);
         $this->load->library('ciqrcode');
         QrCode::png(
             $code,
-            $outfile = false,
-            $level = QR_ECLEVEL_H,
+            false,
+            QR_ECLEVEL_H,
             $size,
-            $margin = 2
+            2
         );
     }
 
-    public function getQrCode() {
+    public function save_qrcode($attendance_link) {
         if ($this->input->is_ajax_request()) {
-            $code_activity = $this->input->get('code_activity');
-            $session_title = $this->input->get('session_title');
-            $size = $this->input->get('size');
-            if(!$size || $size == '') {
-                $size = 10;
-            }
-            $response['qrcode_url'] = base_url('absences/qrcode/' . $code_activity . '?session=' . $session_title . '&size=' . $size);
-            $response['success'] = true;
-            $status_code = 200;
-            $this->send_json($response, $status_code);
+            $code = base_url('site/absences/form/' . $attendance_link);
+            $this->load->library('ciqrcode');
+            $path = FCPATH . 'assets/images/qrcode/' . $attendance_link . '.png';
+            QrCode::png(
+                $code,
+                $path,
+                QR_ECLEVEL_H,
+                7,
+                2
+            );
+            
         } else {
             show_404();
         }

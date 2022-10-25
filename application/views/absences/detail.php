@@ -183,9 +183,6 @@
 				orderable: false,
 				searchable: false,
 				render: function (data, _, row) {
-					if (row[8] == 2) {
-						return '-'
-					}
 					return `<div style="font-size:11px !important; width:105px;">
 								<p class="mb-1">${data}</p>
 								<p class="mb-0">${row[6]}</p>
@@ -194,19 +191,13 @@
 			}, {
 				targets: 'status-col',
 				render: function (data, _, row) {
-					if (row[8] == 2) {
-						return '-'
-					}
-					return `${data}`
+					return data
 				}
 			}, {
 				targets: 'link-col',
 				orderable: false,
 				searchable: false,
 				render: function (data, _, row) {
-					if (row[8] == 2) {
-						return '-'
-					}
 					return `
                         <div style="width:140px;" class="d-flex align-items-center">
                             <span>
@@ -229,12 +220,9 @@
 				render: function (data, _, row) {
 					let link = `<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/participants_list_by_session/${row[7]}">Download PDF</a></li>
 								<li><a class="dropdown-item btn-participants" data-id="${data}" href="#">Manual transfer</a></li>`
-					if (row[8] == 2) {
-						link =
-							`<li><a class="dropdown-item" target="_blank" href="${base_url}absences/qrcode/${code_activity}?session=${row[1]}&size=10">Download QR Code</a></li>`
-					} else if (row[8] == 3) {
+					if (row[8] == 2 || row[8] == 3) {
 						link +=
-							`<li><a class="dropdown-item" target="_blank" href="${base_url}absences/qrcode/${code_activity}?session=${row[1]}&size=10">Download QR Code</a></li>`
+							`<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/qrcode/${row[7]}">Download QR Code</a></li>`
 					}
 					return `<div style="width: 90px;" class="dropdown">
 								<a class="btn btn-sm bg-lighten text-muted dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
@@ -258,26 +246,25 @@
 				showToast('Copied', 'Attendance link copied to clipboard', 'success')
 				$('.link-sample').remove()
 			})
-			$(document).on('keyup', '#session_title', function (e) {
-				$('.small-input').number(true, 0, '', '.')
-				const session_title = $(this).val()
-				const code_activity = $('#code_activity').val()
-				$.ajax({
-					type: 'GET',
-					url: base_url +
-						`absences/getQrCode?code_activity=${code_activity}&session_title=${session_title}`,
-					error: function (xhr) {
-						const response = xhr.responseJSON;
-						console.log(response)
-					},
-					success: function (response) {
-						console.log(response)
-						if (response.success) {
-							updateQrCode(response.qrcode_url)
-						}
-					},
-				});
-			})
+			// $(document).on('keyup', '#session_title', function (e) {
+			// 	const session_title = $(this).val()
+			// 	const code_activity = $('#code_activity').val()
+			// 	$.ajax({
+			// 		type: 'GET',
+			// 		url: base_url +
+			// 			`absences/getQrCode?code_activity=${code_activity}&session_title=${session_title}`,
+			// 		error: function (xhr) {
+			// 			const response = xhr.responseJSON;
+			// 			console.log(response)
+			// 		},
+			// 		success: function (response) {
+			// 			console.log(response)
+			// 			if (response.success) {
+			// 				updateQrCode(response.qrcode_url)
+			// 			}
+			// 		},
+			// 	});
+			// })
 			$(document).on('click', '#qr_link', function (e) {
 				var $temp = $("<input class='link-sample'>");
 				$("body").append($temp);
@@ -322,7 +309,7 @@
 						const assets_token = "<?= $_ENV['ASSETS_TOKEN'] ?>"
 						const is_submitted = $('#is_submitted').val()
 						let input_disabled = ''
-						if(is_submitted == 1) {
+						if (is_submitted == 1) {
 							input_disabled = 'disabled'
 						}
 						const participantsTable = initDatatable('#participants-table', {
@@ -404,9 +391,9 @@
 											number = bank_number
 										}
 										return `<div style="width: 80px !important;">
-                                   <p class="mb-1 fw-bold fs-7">${text}</p>
-                                  <p>${number}</p>
-                                </div>`
+													<p class="mb-1 fw-bold fs-7">${text}</p>
+													<p>${number}</p>
+												</div>`
 									}
 								}, {
 									targets: 'consumption-receipt',
@@ -750,7 +737,8 @@
 									$.ajax({
 										type: 'POST',
 										url: base_url +
-											'absences/submit_absences/' + absence_id,
+											'absences/submit_absences/' +
+											absence_id,
 										beforeSend: function () {
 											Swal.fire({
 												html: loader,
@@ -778,7 +766,8 @@
 												"confirmButtonColor": '#000',
 											}).then((result) => {
 												if (result.value) {
-													participantsTable.draw(false)
+													participantsTable
+														.draw(false)
 												}
 											})
 										},
@@ -796,44 +785,53 @@
 					function (html) {
 						$('#myModal').html(html)
 						$('#myModal').modal('show')
+						const attendance_link = $('#attendance_link').val()
+						initFormAjax('#absence-form', {
+							error: function (xhr) {
+								const response = xhr.responseJSON;
+								if (response.errors) {
+									for (const err in response.errors) {
+										const $parent = $(`#${err.replace("[]", "")}`)
+										.parent();
+										$(`#${err.replace("[]", "")}`).addClass("is-invalid");
+										if ($parent.find("invalid-feeedback").length == 0) {
+											$parent.append(
+												`<div class="invalid-feedback">${response.errors[err]}</div>`
+											);
+										}
+									}
+								}
+								Swal.fire({
+									"title": "Something went wrong!",
+									"text": response.message,
+									"icon": "error",
+									"confirmButtonColor": '#000'
+								});
+							},
+							success: function (data) {
+								if (data.success) {
+									$.ajax({
+										type: 'GET',
+										url: base_url +
+											'absences/save_qrcode/' + attendance_link,
+										success: function (response) {
+											Swal.fire({
+												"title": "Saved!",
+												"text": data.message,
+												"icon": "success",
+												"confirmButtonColor": '#000'
+											}).then((result) => {
+												if (result.value) {
+													$('#myModal').modal('hide')
+												}
+												table.draw()
+											})
+										},
+									});
+								}
+							},
+						})
 					});
-				initFormAjax('#absence-form', {
-					error: function (xhr) {
-						const response = xhr.responseJSON;
-						if (response.errors) {
-							for (const err in response.errors) {
-								const $parent = $(`#${err.replace("[]", "")}`).parent();
-								$(`#${err.replace("[]", "")}`).addClass("is-invalid");
-								if ($parent.find("invalid-feeedback").length == 0) {
-									$parent.append(
-										`<div class="invalid-feedback">${response.errors[err]}</div>`
-									);
-								}
-							}
-						}
-						Swal.fire({
-							"title": "Something went wrong!",
-							"text": response.message,
-							"icon": "error",
-							"confirmButtonColor": '#000'
-						});
-					},
-					success: function (data) {
-						if (data.success) {
-							Swal.fire({
-								"title": "Saved!",
-								"text": data.message,
-								"icon": "success",
-								"confirmButtonColor": '#000'
-							}).then((result) => {
-								if (result.value) {
-									$('#myModal').modal('hide')
-								}
-								table.draw()
-							})
-						}
-					},
-				})
 
 				$(document).on('change', '#kind_of_meeting', function (e) {
 					const value = $(this).val()
