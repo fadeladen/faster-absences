@@ -9,8 +9,7 @@
 				value="<?= $activity_code ?>">
 			<input type="text" class="form-control d-none" name="attendance_link" id="attendance_link"
 				value="<?= $attendance_link ?>">
-			<input type="text" class="form-control d-none" name="qr_file" id="qr_file"
-				value="<?= $qr_file ?>">
+			<input type="text" class="form-control d-none" name="qr_file" id="qr_file" value="<?= $qr_file ?>">
 			<div class="modal-body">
 				<div class="form-group mb-3">
 					<label for="actual_">Session title</label>
@@ -59,15 +58,18 @@
 					<textarea placeholder="https://example.com" name="meeting_link" id="meeting_link"
 						class="form-control mt-1" rows="2"></textarea>
 				</div>
-				<div class="qrcode mb-3 py-4 border-top border-bottom d-none">
-					<div class="row">
-						<div class="col-md-6 d-flex justify-content-center align-items-center">
+				<div class="qrcode mb-3 py-4 mt-4 border-top border-bottom d-none">
+					<div class="d-flex d-flex justify-content-center align-items-center">
+						<img id="qr_code_image" src="<?= base_url('absences/qrcode/') . $attendance_link . '?size=3' ?>"
+							alt="">
+						<!-- <div class="col-md-6 ">
 							<img id="qr_code_image"
 								src="<?= base_url('absences/qrcode/') . $attendance_link . '?size=3' ?>" alt="">
 						</div>
 						<div class="col-md-6">
 							<div class="d-flex justify-content-center h-100 flex-column">
-								<!-- <a id="qr_link" href="#" data-url="<?= base_url('absences/qrcode/') . $attendance_link ?>"
+								<a id="qr_link" href="#"
+									data-url="<?= base_url('absences/qrcode/') . $attendance_link ?>"
 									class="link-primary btn-copy-qr">
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
 										class="bi bi-paperclip" viewBox="0 0 16 16">
@@ -75,7 +77,7 @@
 											d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0V3z" />
 									</svg>
 									Copy QR Code
-								</a> -->
+								</a>
 								<a id="qr_pdf" target="_blank"
 									href="<?= base_url('absences/qrcode/') . $attendance_link ?>"
 									class="link-danger d-flex align-items-center">
@@ -91,7 +93,7 @@
 									</span>
 								</a>
 							</div>
-						</div>
+						</div> -->
 					</div>
 				</div>
 			</div>

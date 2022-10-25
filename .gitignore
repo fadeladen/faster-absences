@@ -35,3 +35,5 @@ uploads/
 .env
 .env.staging
 .htaccess
+
+assets/images/qrcode

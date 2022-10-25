@@ -206,14 +206,3 @@ if (!function_exists('extractImageFromAPI')) {
         return $imageInfo;
 	}
 }
-
-if (!function_exists('get_total_days_period')) {
-    function get_total_days_period($request_id) {
-        $ci = &get_instance();
-        $period = $ci->db->select('start_period, end_period')->from('consultant_request')->where('id', $request_id)->get()->row_array();
-        $start = strtotime($period['start_period']);
-        $end = strtotime($period['end_period']);
-        $datediff = $end - $start;
-        return round($datediff / (60 * 60 * 24)) + 1;
-    }
-}

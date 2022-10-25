@@ -140,6 +140,7 @@
 											<th class="title-col" style="width: 180px;" scope="col">Title</th>
 											<th class="session-col">Session</th>
 											<th class="status-col">Status</th>
+											<th class="payment-col">Payment</th>
 											<th class="link-col">Attendance link</th>
 											<th class="action-col"></th>
 										</tr>
@@ -176,7 +177,14 @@
 			}, {
 				targets: 'title-col',
 				render: function (data, _, row) {
-					return `<h4 class="fw-bolder mt-3 text-gray-700">${data}</h4>`
+					let text = 'Online'
+					if(row[9] == 2) {
+						text = 'Offline'
+					} else if(row[9] == 3) {
+						text = 'Hybrid'
+					}
+					return `<h4 class="fw-bolder mt-3 text-gray-700 mb-0">${data}</h4>
+							<span style="font-size: 11px;" class="text-primary fw-bold">${text}</span>`
 				}
 			}, {
 				targets: 'session-col',
@@ -184,14 +192,25 @@
 				searchable: false,
 				render: function (data, _, row) {
 					return `<div style="font-size:11px !important; width:105px;">
-								<p class="mb-1">${data}</p>
-								<p class="mb-0">${row[6]}</p>
+								<p class="mb-1 mt-2">${data}</p>
+								<p class="mb-0">${row[7]}</p>
 							</div>`
 				}
 			}, {
 				targets: 'status-col',
 				render: function (data, _, row) {
 					return data
+				}
+			}, {
+				targets: 'payment-col',
+				render: function (data, _, row) {
+					let text = 'Pending'
+					let color = 'cb-warning'
+					if(data == 1) {
+						text = 'Complete'
+						color = 'cb-success'
+					}
+					return `<div class='mt-3'><span class='custom-badge ${color}'>${text}</span></div>`
 				}
 			}, {
 				targets: 'link-col',
@@ -218,11 +237,11 @@
 				orderable: false,
 				searchable: false,
 				render: function (data, _, row) {
-					let link = `<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/participants_list_by_session/${row[7]}">Download PDF</a></li>
+					let link = `<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/participants_list_by_session/${row[8]}">Download PDF</a></li>
 								<li><a class="dropdown-item btn-participants" data-id="${data}" href="#">Manual transfer</a></li>`
-					if (row[8] == 2 || row[8] == 3) {
+					if (row[9] == 2 || row[9] == 3) {
 						link +=
-							`<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/qrcode/${row[7]}">Download QR Code</a></li>`
+							`<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/qrcode/${row[8]}">Download QR Code</a></li>`
 					}
 					return `<div style="width: 90px;" class="dropdown">
 								<a class="btn btn-sm bg-lighten text-muted dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">

@@ -52,7 +52,7 @@ class Absences extends MY_Controller {
     public function session_datatable($code_activity)
     {	
         $this->datatable->select('abs.id, abs.session_title, DATE_FORMAT(abs.valid_when, "%d-%m-%Y %H:%i") as valid_when,
-        abs.id as status, abs.attendance_link, abs.id as absence_id, DATE_FORMAT(abs.valid_until, "%d-%m-%Y %H:%i"),
+        abs.id as status, abs.is_submitted as payment_status, abs.attendance_link, abs.id as absence_id, DATE_FORMAT(abs.valid_until, "%d-%m-%Y %H:%i"),
         abs.id as enc_id, abs.kind_of_meeting');
         $this->datatable->from('absences abs');
         $this->datatable->where('code_activity', $code_activity);
@@ -258,9 +258,9 @@ class Absences extends MY_Controller {
 		}
     }
 
-    public function submit_absences($absence_id) {
+    public function submit_payment($absence_id) {
         if ($this->input->is_ajax_request()) {
-            $updated = $this->absences->submit_absences($absence_id);
+            $updated = $this->absences->submit_payment($absence_id);
             if($updated) {
                 $response['message'] = 'Absence has been submitted!';
                 $status_code = 200;
@@ -294,6 +294,9 @@ class Absences extends MY_Controller {
         if ($this->input->is_ajax_request()) {
             $code = base_url('site/absences/form/' . $attendance_link);
             $this->load->library('ciqrcode');
+            if (!is_dir('assets/images/qrcode')) {
+                mkdir('./assets/images/qrcode', 0777, TRUE);
+            }
             $path = FCPATH . 'assets/images/qrcode/' . $attendance_link . '.png';
             QrCode::png(
                 $code,
@@ -302,7 +305,6 @@ class Absences extends MY_Controller {
                 7,
                 2
             );
-            
         } else {
             show_404();
         }

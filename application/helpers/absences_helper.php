@@ -82,7 +82,7 @@ if (!function_exists('total_expired_absences')) {
         $now = date('Y-m-d H:i:s');
         $total = 0;   
         foreach($absences as $abs) {
-            if($now > $abs['valid_until'] && $abs['kind_of_meeting'] != 2) {
+            if($now > $abs['valid_until']) {
                 $total += 1;
             }
         }

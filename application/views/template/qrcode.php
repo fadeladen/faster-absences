@@ -22,6 +22,6 @@
 	<img src="<?php echo FCPATH . 'assets/images/logos/FHI_360.png' ?>" style='width:120px;position:absolute;left:0px'>
 
 	<div class="qr-container">
-    	<img src="<?=  FCPATH . 'assets/images/qrcode/' . $detail['qr_file'] ?>">	
+    	<img style="margin-left: 40px;" src="<?=  FCPATH . 'assets/images/qrcode/' . $detail['qr_file'] ?>">	
 	</div>
 </page>

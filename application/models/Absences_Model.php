@@ -118,7 +118,7 @@ class Absences_Model extends CI_Model
         return $total;
     }
 
-    function submit_absences($absence_id) {
+    function submit_payment($absence_id) {
         $updated = $this->db->where('id', $absence_id)
             ->update('absences', [
                 'is_submitted' => 1,
