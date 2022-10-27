@@ -118,6 +118,15 @@ class Absences_Model extends CI_Model
         return $total;
     }
 
+    function get_total_submitted_advance($code_activity) {
+        $total = $this->db->select('sum(total_advance) as total_submitted')
+        ->from('absences')
+        ->where('code_activity', $code_activity)
+        ->where('is_submitted', 1)
+        ->get()->row()->total_submitted;
+        return $total;
+    }
+
     function submit_payment($absence_id) {
         $total_advance = $this->db->select('sum(jumlah_other+jumlah_internet+jumlah_konsumsi) as total')
             ->get_where('absence_participants', [

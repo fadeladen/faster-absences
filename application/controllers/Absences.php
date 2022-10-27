@@ -27,6 +27,8 @@ class Absences extends MY_Controller {
         $detail['total_absences'] = $total_absence;
         $total_advance = $this->absences->get_total_advance($code_activity);
         $detail['total_advance'] = number_format($total_advance,0,'','.');
+        $total_submitted = $this->absences->get_total_submitted_advance($code_activity);
+        $detail['total_submitted'] = number_format($total_submitted,0,'','.');
         $data['detail'] = $detail;
 		$this->template->set('page', 'Absences detail');
         $this->template->render('absences/detail', $data);
@@ -308,6 +310,27 @@ class Absences extends MY_Controller {
         } else {
             show_404();
         }
+    }
+
+    public function get_current_advance_and_absences($code_activity) {
+        if ($this->input->is_ajax_request()) {
+            $total_advance = $this->absences->get_total_advance($code_activity);
+            $total_absence = $this->db->select('count(id) as total')->from('absences')->where('code_activity', $code_activity)->get()->row()->total;
+            $response['data'] = [
+                'total_advance' => number_format($total_advance,0,'.','.'),
+                'total_absence' => $total_absence,
+            ];
+            $response['success'] = true;
+            $status_code = 200;
+            $this->send_json($response, $status_code);
+        } else {
+            show_404();
+        }
+    }
+
+    public function test($code) {
+        $data = $this->absences->get_total_submitted_advance($code);
+        echo json_encode($data);
     }
 
 }

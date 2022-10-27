@@ -1,7 +1,7 @@
 <div class="modal-dialog modal-lg">
 	<div class="modal-content">
 		<div class="modal-header">
-			<h5 class="modal-title" id="exampleModalLabel">Create absences</h5>
+			<h5 class="modal-title" id="exampleModalLabel">Create new session</h5>
 			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		</div>
 		<form show-validation="true" method="POST" action="<?= base_url('absences/store') ?>" id="absence-form">
@@ -59,9 +59,23 @@
 						class="form-control mt-1" rows="2"></textarea>
 				</div>
 				<div class="qrcode mb-3 py-4 mt-4 border-top border-bottom d-none">
-					<div class="d-flex d-flex justify-content-center align-items-center">
-						<img id="qr_code_image" src="<?= base_url('absences/qrcode/') . $attendance_link . '?size=3' ?>"
+					<div class="d-flex d-flex flex-column justify-content-center align-items-center">
+						<img id="qr_code_image" class="mb-3" src="<?= base_url('absences/qrcode/') . $attendance_link . '?size=4' ?>"
 							alt="">
+						<a id="qr_pdf" target="_blank"
+								href="<?= base_url('absences/qrcode/') . $attendance_link ?>"
+								class="link-danger d-flex align-items-center">
+								<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+									class="bi bi-download" viewBox="0 0 16 16">
+									<path
+										d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+									<path
+										d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+								</svg>
+								<span class="ms-2">
+									Download
+								</span>
+						</a>
 						<!-- <div class="col-md-6 ">
 							<img id="qr_code_image"
 								src="<?= base_url('absences/qrcode/') . $attendance_link . '?size=3' ?>" alt="">

@@ -59,7 +59,7 @@
 							</div>
 							<div class="card-body pt-0">
 								<div class="d-flex flex-column">
-									<div class="d-flex align-items-center mb-5">
+									<div class="d-flex align-items-center mb-2">
 										<img style="width: 4rem !important; height: 4rem !important; border-radius: 8px !important; object-fit: cover !important;"
 											class="img-fluid me-5"
 											src="<?= ($detail['avatar'] == null) ? base_url('assets/images/no-avatar.png') : $_ENV['ASSETS_URL'] . $detail['avatar'] .'?subfolder=avatars&token=' . $_ENV['ASSETS_TOKEN'] ?>"
@@ -91,7 +91,7 @@
 											</Input>
 										</div>
 									</div>
-									<div class="d-flex align-items-center mb-5 mt-5">
+									<div class="d-flex align-items-center my-5">
 										<span class="icon-badge cb-dark">
 											<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
 												fill="currentColor" class="bi bi-bar-chart-fill" viewBox="0 0 16 16">
@@ -101,12 +101,42 @@
 										</span>
 										<div class="ms-5">
 											<div class="fw-bolder text-gray-800 fs-5">
-												Rp. <?= $detail['total_advance'] ?>
+												Rp. <span
+													id="count_total_advance"><?= $detail['total_advance'] ?></span>
 											</div>
 											<div class="text-muted fw-bold d-flex flex-column">
 												Advance Used
 											</div>
 										</div>
+									</div>
+									<!-- <div class="d-flex align-items-center my-5">
+										<span class="icon-badge cb-dark">
+											<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+												fill="currentColor" class="bi bi-bar-chart-fill" viewBox="0 0 16 16">
+												<path
+													d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2z" />
+											</svg>
+										</span>
+										<div class="ms-5">
+											<div class="fw-bolder text-gray-800 fs-5">
+												Rp. <span
+													id="count_total_submitted"><?= $detail['total_submitted'] ?></span>
+											</div>
+											<div class="text-muted fw-bold d-flex flex-column">
+												Advance Submitted
+											</div>
+										</div>
+									</div> -->
+									<div class="mx-auto mt-5">
+										<button type="button" class="btn btn-primary btn-lg d-flex align-items-center">
+											<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+												fill="currentColor" class="bi bi-envelope-paper-fill"
+												viewBox="0 0 16 16">
+												<path fill-rule="evenodd"
+													d="M6.5 9.5 3 7.5v-6A1.5 1.5 0 0 1 4.5 0h7A1.5 1.5 0 0 1 13 1.5v6l-3.5 2L8 8.75l-1.5.75ZM1.059 3.635 2 3.133v3.753L0 5.713V5.4a2 2 0 0 1 1.059-1.765ZM16 5.713l-2 1.173V3.133l.941.502A2 2 0 0 1 16 5.4v.313Zm0 1.16-5.693 3.337L16 13.372v-6.5Zm-8 3.199 7.941 4.412A2 2 0 0 1 14 16H2a2 2 0 0 1-1.941-1.516L8 10.072Zm-8 3.3 5.693-3.162L0 6.873v6.5Z" />
+											</svg>
+											<span class="ms-2 fw-bold">Report Activity</span>
+										</button>
 									</div>
 								</div>
 							</div>
@@ -126,7 +156,16 @@
 								</div>
 								<div class="card-toolbar">
 									<button id="btn-create-session" data-id="<?= $detail['kode_kegiatan'] ?>"
-										class="btn btn-primary">Create New Session</button>
+										class="btn btn-primary d-flex align-items-center">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+											fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+											<path fill-rule="evenodd"
+												d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z" />
+										</svg>
+										<span class="ms-2">
+											Create New Session
+										</span>
+									</button>
 								</div>
 							</div>
 							<div class="card-body pt-4">
@@ -159,6 +198,24 @@
 
 	<script>
 		const code_activity = $('#code_activity').val()
+		const updateDetailActivity = () => {
+			$.ajax({
+				type: 'GET',
+				url: base_url + 'absences/get_current_advance_and_absences/' +
+					code_activity,
+				error: function (xhr) {
+					const response = xhr.responseJSON;
+					console.log(response)
+				},
+				success: function (response) {
+					const data = response.data
+					if (response.success) {
+						$('#count_absences').text(data.total_absence)
+						$('#count_total_advance').text(data.total_advance)
+					}
+				},
+			});
+		}
 		const table = initDatatable('#table', {
 			lengthMenu: [
 				[5, 25, 50, -1],
@@ -172,18 +229,18 @@
 				orderable: false,
 				searchable: false,
 				render: function (data, type, row, meta) {
-					return `<div class="mt-3"><span class="custom-badge cb-dark">${meta.row + meta.settings._iDisplayStart + 1}</span></div>`
+					return `<div class="mt-4"><span class="custom-badge cb-dark">${meta.row + meta.settings._iDisplayStart + 1}</span></div>`
 				}
 			}, {
 				targets: 'title-col',
 				render: function (data, _, row) {
 					let text = 'Online'
-					if(row[9] == 2) {
+					if (row[9] == 2) {
 						text = 'Offline'
-					} else if(row[9] == 3) {
+					} else if (row[9] == 3) {
 						text = 'Hybrid'
 					}
-					return `<h4 class="fw-bolder mt-3 text-gray-700 mb-0">${data}</h4>
+					return `<h4 class="fw-bolder mt-2 text-gray-700 mb-0">${data}</h4>
 							<span style="font-size: 11px;" class="text-primary fw-bold">${text}</span>`
 				}
 			}, {
@@ -206,7 +263,7 @@
 				render: function (data, _, row) {
 					let text = 'Pending'
 					let color = 'cb-warning'
-					if(data == 1) {
+					if (data == 1) {
 						text = 'Complete'
 						color = 'cb-success'
 					}
@@ -218,8 +275,8 @@
 				searchable: false,
 				render: function (data, _, row) {
 					return `
-                        <div style="width:140px;" class="d-flex align-items-center">
-                            <span>
+                        <div style="width:140px;" class="d-flex align-items-center fw-bold text-gray-800">
+                            <span class="fs-5">
                                  ${data}
                             </span>
                              <button data-id="${data}" class="btn btn-light btn-copy-link bg-transparent fw-bold p-2 ms-1">
@@ -237,11 +294,12 @@
 				orderable: false,
 				searchable: false,
 				render: function (data, _, row) {
-					let link = `<li><a class="dropdown-item btn-participants" data-id="${data}" href="#">Manual transfer</a></li>
+					let link =
+						`<li><a class="dropdown-item btn-participants" data-id="${data}" href="#">Manual transfer</a></li>
 					<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/participants_list_by_session/${row[8]}">Download PDF</a></li>`
 					if (row[9] == 2 || row[9] == 3) {
 						link +=
-							`<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/qrcode/${row[8]}">Download QR Code</a></li>`
+							`<li><a class="dropdown-item" target="_blank" href="${base_url}absences/qrcode/${row[8]}?size=4">Download QR Code</a></li>`
 					}
 					return `<div style="width: 90px;" class="dropdown">
 								<a class="btn btn-sm bg-lighten text-muted dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
@@ -677,6 +735,7 @@
 												.val(response
 													.data.total)
 											updateTotalField(abs_id)
+											updateDetailActivity()
 										}
 									},
 								});
@@ -785,10 +844,17 @@
 												"icon": "success",
 												"confirmButtonColor": '#000',
 											}).then((result) => {
-												$this.attr('disabled', true)
-												$this.parent().parent().find('.small-input').attr('disabled', true)
+												$this.attr('disabled',
+													true)
+												$this.parent()
+													.parent().find(
+														'.small-input'
+													).attr(
+														'disabled',
+														true)
 												if (result.value) {
-													$('#myModal').modal('hide')
+													$('#myModal')
+														.modal('hide')
 												}
 												table.draw()
 											})
@@ -814,7 +880,7 @@
 								if (response.errors) {
 									for (const err in response.errors) {
 										const $parent = $(`#${err.replace("[]", "")}`)
-										.parent();
+											.parent();
 										$(`#${err.replace("[]", "")}`).addClass("is-invalid");
 										if ($parent.find("invalid-feeedback").length == 0) {
 											$parent.append(
@@ -844,7 +910,8 @@
 												"confirmButtonColor": '#000'
 											}).then((result) => {
 												if (result.value) {
-													$('#myModal').modal('hide')
+													$('#myModal').modal(
+														'hide')
 												}
 												table.draw()
 											})
