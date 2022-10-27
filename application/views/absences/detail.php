@@ -898,25 +898,37 @@
 							},
 							success: function (data) {
 								if (data.success) {
-									$.ajax({
-										type: 'GET',
-										url: base_url +
-											'absences/save_qrcode/' + attendance_link,
-										success: function (response) {
-											Swal.fire({
-												"title": "Saved!",
-												"text": data.message,
-												"icon": "success",
-												"confirmButtonColor": '#000'
-											}).then((result) => {
-												if (result.value) {
-													$('#myModal').modal(
-														'hide')
-												}
-												table.draw()
-											})
-										},
-									});
+									Swal.fire({
+										"title": "Saved!",
+										"text": data.message,
+										"icon": "success",
+										"confirmButtonColor": '#000'
+									}).then((result) => {
+										if (result.value) {
+											$('#myModal').modal(
+												'hide')
+										}
+										table.draw()
+									})
+									// $.ajax({
+									// 	type: 'GET',
+									// 	url: base_url +
+									// 		'absences/save_qrcode/' + attendance_link,
+									// 	success: function (response) {
+									// 		Swal.fire({
+									// 			"title": "Saved!",
+									// 			"text": data.message,
+									// 			"icon": "success",
+									// 			"confirmButtonColor": '#000'
+									// 		}).then((result) => {
+									// 			if (result.value) {
+									// 				$('#myModal').modal(
+									// 					'hide')
+									// 			}
+									// 			table.draw()
+									// 		})
+									// 	},
+									// });
 								}
 							},
 						})
