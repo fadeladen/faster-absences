@@ -56,7 +56,8 @@ class Documents extends MY_Controller {
 		$sheet = $spreadsheet->getActiveSheet();
 		$sheet->setCellValue('C2', $detail['activity']);
 		$sheet->setCellValue('C3', $detail['activity_date']);
-		$sheet->setCellValue('C5', $detail['pa_name']);
+		$sheet->setCellValue('C5', $detail['requestor_name']);
+		$sheet->setCellValue('C6', $detail['pa_name']);
 		$writer = new Xlsx($spreadsheet);
         $current_time = date('d-m-Y h:i:s');
         $filename = "Daftar Kehadiran/$current_time";
