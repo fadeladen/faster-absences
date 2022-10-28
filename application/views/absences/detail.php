@@ -176,7 +176,7 @@
 									<thead>
 										<tr class="text-start fw-bolder fs-7 bg-lighten">
 											<th class="number-col text-center" style="width: 20px;" scope="col">No</th>
-											<th class="title-col" style="width: 180px;" scope="col">Title</th>
+											<th class="title-col" style="width: 140px;" scope="col">Title</th>
 											<th class="session-col">Session</th>
 											<th class="status-col">Status</th>
 											<th class="payment-col">Payment</th>
@@ -240,8 +240,10 @@
 					} else if (row[9] == 3) {
 						text = 'Hybrid'
 					}
-					return `<h4 class="fw-bolder mt-2 text-gray-700 mb-0">${data}</h4>
-							<span style="font-size: 11px;" class="text-primary fw-bold">${text}</span>`
+					return `<div style="width:140px;" class="d-flex flex-column">
+					 			<h4 class="fw-bolder mt-2 text-gray-700 mb-0">${data}</h4>
+								<span style="font-size: 11px;" class="text-primary fw-bold">${text}</span>
+							</div>`
 				}
 			}, {
 				targets: 'session-col',
@@ -301,9 +303,10 @@
 					}
 					if (row[9] == 2 || row[9] == 3) {
 						link +=
-							`<li><a class="dropdown-item" target="_blank" href="${base_url}absences/qrcode/${row[8]}?size=4">Download QR Code</a></li>`
+							`<li><a class="dropdown-item" target="_blank" href="${base_url}absences/qrcode/${row[8]}?size=4">Download QR Code</a></li>
+							 <li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/blank_absence/${row[8]}?size=4">Download Blank Absence</a></li>`
 					}
-					return `<div style="width: 90px;" class="dropdown">
+					return `<div style="width: 135px;" class="dropdown">
 								<a class="btn btn-sm bg-lighten text-muted dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
 									Options
 								</a>
@@ -325,25 +328,6 @@
 				showToast('Copied', 'Attendance link copied to clipboard', 'success')
 				$('.link-sample').remove()
 			})
-			// $(document).on('keyup', '#session_title', function (e) {
-			// 	const session_title = $(this).val()
-			// 	const code_activity = $('#code_activity').val()
-			// 	$.ajax({
-			// 		type: 'GET',
-			// 		url: base_url +
-			// 			`absences/getQrCode?code_activity=${code_activity}&session_title=${session_title}`,
-			// 		error: function (xhr) {
-			// 			const response = xhr.responseJSON;
-			// 			console.log(response)
-			// 		},
-			// 		success: function (response) {
-			// 			console.log(response)
-			// 			if (response.success) {
-			// 				updateQrCode(response.qrcode_url)
-			// 			}
-			// 		},
-			// 	});
-			// })
 			$(document).on('click', '#qr_link', function (e) {
 				var $temp = $("<input class='link-sample'>");
 				$("body").append($temp);

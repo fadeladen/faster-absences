@@ -33,11 +33,13 @@ class Absences_Model extends CI_Model
     }
 
     function get_absences_by_id($id) {
-        return $this->db->select('dm.activity, u.username as pa_name, u.purpose as pa_purpose, mp.advance_number, a.id as absence_id, a.*')
+        return $this->db->select('dm.activity, DATE_FORMAT(a.valid_when, "%d-%b-%Y") as activity_date, u.username as pa_name,
+         u.purpose as pa_purpose, mp.advance_number, rq.username as requestor_name, a.id as absence_id, a.*')
         ->from('absences a')
         ->join('tb_detail_monthly dm', 'dm.kode_kegiatan = a.code_activity')
         ->join('tb_mini_proposal_new mp', 'a.code_activity = mp.code_activity')
         ->join('tb_userapp u', 'a.created_by = u.id')
+        ->join('tb_userapp rq', 'mp.create_by = rq.id')
         ->where('a.id', $id)->get()->row_array();
     }
 
