@@ -29,14 +29,18 @@
 						<th class="email-col" rowspan='2'>Email</th>
 						<th class="payment-col" rowspan='2'>Payment Method</th>
 						<th style="text-align: center;" colspan='4'>Reimbursement</th>
-						<th class="consumption-receipt" rowspan='2'>Consumption Receipt</th>
+						<th class="consumption-receipt" rowspan='2'>Receipt</th>
 						<th class="transfer-receipt" rowspan='2'>Transfer Receipt</th>
 						<th class="action-col" rowspan='2'>Action</th>
 					</tr>
 					<tr>
 						<th class="meal-col">Meal</th>
 						<th class="internet-col">Internet</th>
-						<th class="other-col">Other</th>
+						<th class="other-col">
+						 	<small>Other</small>
+							<br>
+							<small style="font-size: 10px;">(Loc.transport & etc)</small>
+						</th>
 						<th class="total-col">Total</th>
 					</tr>
 				</thead>
@@ -75,7 +79,7 @@
 					Submit
 				</span>
 			</button>
-			<a class="btn btn-danger" target="_blank"
+			<a class="btn btn-danger <?= ($detail['is_submitted'] == 0) ? 'd-none' : '' ?>" target="_blank"
 				href="<?= base_url('site/documents/participants_list_by_session/') . encrypt($detail['absence_id']) ?>">
 				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
 					class="bi bi-download" viewBox="0 0 16 16">

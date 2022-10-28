@@ -264,7 +264,7 @@ class Absences extends MY_Controller {
         if ($this->input->is_ajax_request()) {
             $updated = $this->absences->submit_payment($absence_id);
             if($updated) {
-                $response['message'] = 'Payment has been submitted!';
+                $response['message'] = 'Data anda sudah terkirim, system sedang melakukan proses generate laporan pdf rekapitulasi, maksimal butuh waktu 2 jam untuk menyelesaikannya!';
                 $status_code = 200;
             } else {
                 $response['message'] = 'Something went wrong, please try again later!';

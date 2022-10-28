@@ -109,7 +109,7 @@
 											</div>
 										</div>
 									</div>
-									<!-- <div class="d-flex align-items-center my-5">
+									<div class="d-flex align-items-center my-5">
 										<span class="icon-badge cb-dark">
 											<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
 												fill="currentColor" class="bi bi-bar-chart-fill" viewBox="0 0 16 16">
@@ -126,7 +126,7 @@
 												Advance Submitted
 											</div>
 										</div>
-									</div> -->
+									</div>
 									<div class="mx-auto mt-5">
 										<button type="button" class="btn btn-primary btn-lg d-flex align-items-center">
 											<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
@@ -295,8 +295,10 @@
 				searchable: false,
 				render: function (data, _, row) {
 					let link =
-						`<li><a class="dropdown-item btn-participants" data-id="${data}" href="#">Manual transfer</a></li>
-					<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/participants_list_by_session/${row[8]}">Download PDF</a></li>`
+						`<li><a class="dropdown-item btn-participants" data-id="${data}" href="#">Manual transfer</a></li>`
+					if(row[4] == 1) {
+						link += `<li><a class="dropdown-item" target="_blank" href="${base_url}site/documents/participants_list_by_session/${row[8]}">Download PDF</a></li>`
+					}
 					if (row[9] == 2 || row[9] == 3) {
 						link +=
 							`<li><a class="dropdown-item" target="_blank" href="${base_url}absences/qrcode/${row[8]}?size=4">Download QR Code</a></li>`
@@ -837,12 +839,17 @@
 											});
 										},
 										success: function (response) {
+											const pdfloader = `<div class="py-5 my-5 d-flex justify-content-center align-items-center">
+																	<span class="pdf-loader"></span>
+																</div>
+																<h5 class="mt-2">Success!</h5>
+																<p class="mb-0">${response.message}</p>`
 											Swal.fire({
-												"title": "Success!",
-												"text": response
-													.message,
-												"icon": "success",
-												"confirmButtonColor": '#000',
+												"html": pdfloader,
+												"showConfirmButton": true,
+												"allowEscapeKey": true,
+												"allowOutsideClick": true,
+												"confirmButtonColor": '#000'
 											}).then((result) => {
 												$this.attr('disabled',
 													true)
@@ -857,7 +864,7 @@
 														.modal('hide')
 												}
 												table.draw()
-											})
+											});
 										},
 									});
 								}
