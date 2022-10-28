@@ -39,8 +39,7 @@ class Absences extends MY_Controller {
             $this->form_validation->set_rules('phone_number', 'No HP/WhatsApp', 'required');
             $this->form_validation->set_rules('email_peserta', 'Email peserta', 'required');
             $this->form_validation->set_rules('jumlah_konsumsi', 'Jumlah konsumsi', 'required');
-            $this->form_validation->set_rules('jumlah_internet', 'Jumlah internet', 'required');
-            // $this->form_validation->set_rules('resi_konsumsi', 'Resi konsumsi', 'required');
+            $this->form_validation->set_rules('resi_konsumsi', 'Resi', 'required');
             $this->form_validation->set_rules('payment_method', 'Proses reimbursement', 'required');
 			$this->form_validation->set_message('required', '{field} harus diisi.');
 			$type = $this->input->post('payment_method');
@@ -52,8 +51,18 @@ class Absences extends MY_Controller {
 				$this->form_validation->set_rules('bank_name', 'Nama BANK', 'required');
 				$this->form_validation->set_rules('bank_number', 'Nomor rekening', 'required');
 			}
+			$kind_of_meeting = $this->input->post('kind_of_meeting');
+			if($kind_of_meeting == '1') {
+				$this->form_validation->set_rules('jumlah_internet', 'Jumlah internet', 'required');
+			} else if($kind_of_meeting == '2') {
+				$this->form_validation->set_rules('jumlah_other', 'Jumlah Local transport', 'required');
+			} else if($kind_of_meeting == '3') {
+				$this->form_validation->set_rules('jumlah_internet', 'Jumlah internet', 'required');
+				$this->form_validation->set_rules('jumlah_other', 'Jumlah Local transport', 'required');
+			}
 			if ($this->form_validation->run()) {
 				$payload = $this->input->post();
+				unset($payload['kind_of_meeting']);
 				$saved = $this->absences->insert_attendance($payload);
 				if($saved) {
 					$response['payload'] = $payload;

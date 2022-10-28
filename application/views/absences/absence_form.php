@@ -1,4 +1,5 @@
-<div style="background-color: #1e1e2d; padding-top: 3rem; padding-bottom: 13rem; min-height: 58rem;" class="d-flex flex-column px-5">
+<div style="background-color: #1e1e2d; padding-top: 3rem; padding-bottom: 13rem; min-height: 58rem;"
+	class="d-flex flex-column px-5">
 	<div class="d-flex justify-content-center align-items-center mb-5 pb-3">
 		<img style="width: 15rem; height: auto;" src="<?= base_url('assets/images/logos/faster_v2.png') ?>" alt="">
 	</div>
@@ -11,7 +12,7 @@
 			<div class="py-3 px-5 mb-2 border-bottom">
 				<p>Bapak/Ibu yang mengikuti kegiatan ini dapat melakukan reimbursement makan siang dengan
 					mengisi form reimbursement berikut dengan lengkap..</p>
-	
+
 				<p>
 					Makan Siang<br />
 					Peserta diperbolehkan untuk memesan makan siang masing-masing menggunakan ojek online
@@ -23,22 +24,25 @@
 					3. jika kegiatan lebih dari 4- 6 jam maksimal Rp 60.000/orang<br />
 					4. Jika lebih dari 6 jam, maksima Rp. 85.000/orang (makan siang, snack, dan biaya
 					pengiriman) <br /><br />
-	
+
 					Peserta haris melampirkan resi pemesanan melalui Form berikut sampai pukul 23.59 WIB
 					pada hari kegiatan berlangsung. <br />
-	
+
 					Resi pembelian konsumsi berupa resi pembelian melalui jasa ojek online (ie.
 					Grabfood/Go-Food) ataupun resi pembelian langsung di restoran/kedai. Untuk resi
 					pembelian di restoran/kedai, mohon dipastikan tertera informasi nama restoran, tanggal
 					yang sama dengan pelaksanaan kegiatan, lokasi restoran/kedai harus sama dengan domisili
 					Bapak/Ibu saat ini, alamat atapun kontak restoran/kedai tersebut.
-	
+
 					<br />Terima kasih
+					<br>
 				</p>
 			</div>
-			<form method="POST" action="<?= base_url('site/absences/store') ?>"
-				id="attendance-form">
-				<input class="d-none" type="text" value="<?= $detail['absence_id'] ?>" name="absence_id" id="absence_id">
+			<form method="POST" action="<?= base_url('site/absences/store') ?>" id="attendance-form">
+				<input class="d-none" type="text" value="<?= $detail['absence_id'] ?>" name="absence_id"
+					id="absence_id">
+				<input class="d-none" type="text" value="<?= $detail['kind_of_meeting'] ?>" name="kind_of_meeting"
+					id="kind_of_meeting">
 				<div class="modal-body">
 					<div class="row">
 						<div class="form-group col-12 mb-3">
@@ -98,13 +102,15 @@
 						<div class="form-group col-12 mb-3">
 							<label class="fw-bolder">Tujuan pengisian absensi</label> <br>
 							<div class="form-check mt-3 mb-3">
-								<input class="form-check-input" value="1" type="radio" name="tujuan_pengisian" id="flexRadioDefault1">
+								<input class="form-check-input" value="1" type="radio" name="tujuan_pengisian"
+									id="flexRadioDefault1">
 								<label class="form-check-label" for="flexRadioDefault1">
 									Hanya mengisi absensi tanpa participant cost
 								</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" value="2" type="radio" name="tujuan_pengisian" id="flexRadioDefault2">
+								<input class="form-check-input" value="2" type="radio" name="tujuan_pengisian"
+									id="flexRadioDefault2">
 								<label class="form-check-label" for="flexRadioDefault2">
 									Mengisi absensi dengan participant cost
 								</label>
@@ -119,7 +125,8 @@
 								</label>
 							</div>
 							<div class="ovo-field mb-2 ps-5 ms-4 d-none">
-								<input placeholder="Masukkan nomor OVO" type="text" class="form-control" name="ovo_number" id="ovo_number">
+								<input placeholder="Masukkan nomor OVO" type="text" class="form-control"
+									name="ovo_number" id="ovo_number">
 							</div>
 							<div class="form-check mt-5">
 								<input class="form-check-input" value="2" type="radio" name="payment_method" id="p2">
@@ -128,7 +135,8 @@
 								</label>
 							</div>
 							<div class="gopay-field mb-2 ps-5 ms-4 d-none">
-								<input placeholder="Masukkan nomor GOPAY" type="text" class="form-control" name="gopay_number" id="gopay_number">
+								<input placeholder="Masukkan nomor GOPAY" type="text" class="form-control"
+									name="gopay_number" id="gopay_number">
 							</div>
 							<div class="form-check mt-5">
 								<input class="form-check-input" value="3" type="radio" name="payment_method" id="p3">
@@ -138,26 +146,43 @@
 							</div>
 							<div class="bank-field mb-2 ps-5 form-group ms-4 d-none">
 								<div class="mb-2">
-									<input placeholder="Masukkan nama Bank" type="text" class="form-control" name="bank_name" id="bank_name">
+									<input placeholder="Masukkan nama Bank" type="text" class="form-control"
+										name="bank_name" id="bank_name">
 								</div>
 								<div class="mb-2">
 									<label>Nomor rekening </label>
-									<input placeholder="Masukkan nomor rekening" type="text" class="form-control" name="bank_number" id="bank_number">
+									<input placeholder="Masukkan nomor rekening" type="text" class="form-control"
+										name="bank_number" id="bank_number">
 								</div>
 							</div>
 						</div>
 						<div class="form-group col-md-6 my-3">
 							<label class="fw-bolder">Jumlah konsumsi</label>
-							<input placeholder="Masukkan jumlah konsumsi" type="text" class="form-control mt-2" name="jumlah_konsumsi"
-								id="jumlah_konsumsi">
+							<input placeholder="Masukkan jumlah konsumsi" type="text" class="form-control mt-2"
+								name="jumlah_konsumsi" id="jumlah_konsumsi">
 						</div>
-						<div class="form-group col-md-6 my-3">
+						<?php 
+							$kind_of_meeting = $detail['kind_of_meeting'];
+							$internet_input = '';
+							$other_input = '';
+							if($kind_of_meeting == 1) {
+								$other_input = 'd-none';
+							} else if($kind_of_meeting == 2) {
+								$internet_input = 'd-none';
+							}
+						 ?>
+						<div class="form-group col-md-6 my-3 <?= $internet_input ?>">
 							<label class="fw-bolder">Jumlah internet</label>
-							<input placeholder="Masukkan jumlah internet" type="text" class="form-control mt-2" name="jumlah_internet"
-								id="jumlah_internet">
+							<input placeholder="Masukkan jumlah internet" type="text" class="form-control mt-2"
+								name="jumlah_internet" id="jumlah_internet">
 						</div>
-						<div class="form-group col-12 mb-3">
-							<label class="fw-bolder">Upload resi konsumsi</label>
+						<div class="form-group col-md-6 my-3 <?= $other_input ?>">
+							<label class="fw-bolder">Jumlah local transport</label>
+							<input placeholder="Masukkan jumlah local transport" type="text" class="form-control mt-2"
+								name="jumlah_other" id="jumlah_other">
+						</div>
+						<div class="form-group col-6 my-3">
+							<label class="fw-bolder">Upload resi</label>
 							<input type="file" class="form-control mt-2" name="resi_file" id="resi_file">
 							<input type="text" class="form-control field-value d-none" name="resi_konsumsi"
 								id="resi_konsumsi">
@@ -178,23 +203,23 @@
 
 <script>
 	$(document).ready(function () {
-        $('input[name=payment_method]').change(function () {
-            const value = $(this).val();
-            if (value == '1') {
-                $('.ovo-field').removeClass('d-none')
-                $('.gopay-field').addClass('d-none')
-                $('.bank-field').addClass('d-none')
-            } else if(value == '2') {
-                $('.gopay-field').removeClass('d-none')
-                $('.ovo-field').addClass('d-none')
-                $('.bank-field').addClass('d-none')
-            } else {
-                $('.bank-field').removeClass('d-none')
-                $('.ovo-field').addClass('d-none')
-                $('.gopay-field').addClass('d-none')
-            }
+		$('input[name=payment_method]').change(function () {
+			const value = $(this).val();
+			if (value == '1') {
+				$('.ovo-field').removeClass('d-none')
+				$('.gopay-field').addClass('d-none')
+				$('.bank-field').addClass('d-none')
+			} else if (value == '2') {
+				$('.gopay-field').removeClass('d-none')
+				$('.ovo-field').addClass('d-none')
+				$('.bank-field').addClass('d-none')
+			} else {
+				$('.bank-field').removeClass('d-none')
+				$('.ovo-field').addClass('d-none')
+				$('.gopay-field').addClass('d-none')
+			}
 		});
-		$('#jumlah_konsumsi, #jumlah_internet').number(true, 0, '', '.')
+		$('#jumlah_konsumsi, #jumlah_internet, #jumlah_other').number(true, 0, '', '.')
 		$('#asal_layanan').select2()
 		const asset_url = "<?= $_ENV['ASSETS_URL'] ?>"
 		const loader = `<div style="width: 5rem; height: 5rem;" class="spinner-border mb-5" role="status"></div>
@@ -204,41 +229,54 @@
 			var $this = $(this);
 			var form = new FormData();
 			form.append("file", $this[0].files[0]);
-			$.ajax({
-				url: asset_url + 'resi_konsumsi',
-				type: "POST",
-				data: form,
-				cache: false,
-				contentType: false,
-				processData: false,
-				dataType: 'json',
-				beforeSend: function (request) {
-					request.setRequestHeader("token", "<?= $_ENV['ASSETS_TOKEN'] ?>");
-					$this.parent().find('.upload-notif').text(
-						'Mengupload file ..., mohon tunggu!')
-				},
-				error: function (xhr) {
-					const response = xhr.responseJSON;
-					console.log(response)
-					$this.parent().find('.upload-notif').text('Gagal mengupload file!')
-						.addClass('text-danger')
-					$this.val(null);
-					$this.parent().find('.field-value').val('')
-				},
-				success: function (response) {
-					if (response.status === true) {
-						const filename = response.data.filename
-						$this.parent().find('.field-value').val(filename)
-						$this.parent().find('.upload-notif').text('File berhasil di upload!')
-							.addClass('text-success')
-					} else {
-						$this.parent().find('.field-value').val('')
-						$this.val(null);
+			let size = $this[0].files[0].size / 1024 / 1024
+			size = size.toFixed(2)
+			let valid = false
+			if (size <= 1) {
+				valid = true
+			}
+			if (valid) {
+				$.ajax({
+					url: asset_url + 'resi_konsumsi',
+					type: "POST",
+					data: form,
+					cache: false,
+					contentType: false,
+					processData: false,
+					dataType: 'json',
+					beforeSend: function (request) {
+						request.setRequestHeader("token", "<?= $_ENV['ASSETS_TOKEN'] ?>");
+						$this.parent().find('.upload-notif').text(
+							'Mengupload file ..., mohon tunggu!')
+					},
+					error: function (xhr) {
+						const response = xhr.responseJSON;
+						console.log(response)
 						$this.parent().find('.upload-notif').text('Gagal mengupload file!')
 							.addClass('text-danger')
-					}
-				},
-			});
+						$this.val(null);
+						$this.parent().find('.field-value').val('')
+					},
+					success: function (response) {
+						if (response.status === true) {
+							const filename = response.data.filename
+							$this.parent().find('.field-value').val(filename)
+							$this.parent().find('.upload-notif').text(
+									'File berhasil di upload!')
+								.addClass('text-success')
+						} else {
+							$this.parent().find('.field-value').val('')
+							$this.val(null);
+							$this.parent().find('.upload-notif').text('Gagal mengupload file!')
+								.addClass('text-danger')
+						}
+					},
+				});
+			} else {
+				$this.val(null);
+				$this.parent().find('.upload-notif').text('Ukuran file maksimal 2MB!')
+								.addClass('text-danger')
+			}
 		})
 
 		initFormAjax('#attendance-form', {
