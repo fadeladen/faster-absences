@@ -12,7 +12,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 # Load phpdotenv
-$hook['pre_system'] = function() {
-    $dotenv = Dotenv\Dotenv::create(FCPATH);
-    $dotenv->load();
-   };
+// $hook['pre_system'] = function() {
+//     $dotenv = Dotenv\Dotenv::create(FCPATH);
+//     $dotenv->load();
+//    };
