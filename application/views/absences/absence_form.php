@@ -146,8 +146,7 @@
 							</div>
 							<div class="bank-field mb-2 ps-5 form-group ms-4 d-none">
 								<div class="mb-2">
-									<input placeholder="Masukkan nama Bank" type="text" class="form-control"
-										name="bank_name" id="bank_name">
+									<select class="form-select mt-2" name="bank_name" id="bank_name"></select>
 								</div>
 								<div class="mb-2">
 									<label>Nomor rekening </label>
@@ -221,6 +220,23 @@
 		});
 		$('#jumlah_konsumsi, #jumlah_internet, #jumlah_other').number(true, 0, '', '.')
 		$('#asal_layanan').select2()
+		$('#bank_name').select2({
+			placeholder: 'Pilih Bank',
+			ajax: {
+				'url': `${base_url}api/base_data/get_banks`,
+				data: function (params) {
+					return {
+						q: params.term,
+						select2: true,
+					}
+				},
+				processResults: function (response) {
+					return {
+						results: response.result
+					}
+				}
+			}
+		})
 		const asset_url = "<?= $_ENV['ASSETS_URL'] ?>"
 		const loader = `<div style="width: 5rem; height: 5rem;" class="spinner-border mb-5" role="status"></div>
 				<h5 class="mt-2">Mohon tunggu</h5>
@@ -275,7 +291,7 @@
 			} else {
 				$this.val(null);
 				$this.parent().find('.upload-notif').text('Ukuran file maksimal 2MB!')
-								.addClass('text-danger')
+					.addClass('text-danger')
 			}
 		})
 

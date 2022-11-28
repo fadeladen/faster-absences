@@ -42,14 +42,14 @@ class Absences extends MY_Controller {
             $this->form_validation->set_rules('resi_konsumsi', 'Resi', 'required');
             $this->form_validation->set_rules('payment_method', 'Proses reimbursement', 'required');
 			$this->form_validation->set_message('required', '{field} harus diisi.');
-			$type = $this->input->post('payment_method');
-			if($type == '1') {
-				$this->form_validation->set_rules('ovo_number', 'Nomor OVO', 'required');
-			} else if($type == '2') {
-				$this->form_validation->set_rules('gopay_number', 'Nomor GOPAY', 'required');
-			} else if($type == '3') {
-				$this->form_validation->set_rules('bank_name', 'Nama BANK', 'required');
+			$payment_method = $this->input->post('payment_method');
+			if($payment_method == '3') {
 				$this->form_validation->set_rules('bank_number', 'Nomor rekening', 'required');
+				$this->form_validation->set_rules('bank_name', 'Nama BANK', 'required');
+			} else if($payment_method == '1') {
+				$this->form_validation->set_rules('ovo_number', 'Nomor ovo', 'required');
+			} else if ($payment_method == '2'){
+				$this->form_validation->set_rules('gopay_number', 'Nomor ovo', 'required');
 			}
 			$kind_of_meeting = $this->input->post('kind_of_meeting');
 			if($kind_of_meeting == '1') {
@@ -62,7 +62,24 @@ class Absences extends MY_Controller {
 			}
 			if ($this->form_validation->run()) {
 				$payload = $this->input->post();
+				$bank_number = $payload['bank_number'];
+				if($payment_method == '1') {
+					$bank_number = $payload['ovo_number']; 
+					$bank_name = 'OVO';
+				} else if($payment_method == '2') {
+					$bank_number = $payload['gopay_number'];
+					$bank_name = 'GoPay';
+					unset($payload['ovo_number']);
+				} else {
+					$bank_name = $payload['bank_name'];
+				}
+				$payload['bank_number'] = $bank_number;
+				$payload['bank_name'] = $bank_name;
+				$payload['bank_code'] = $this->get_bank_code($bank_name);
 				unset($payload['kind_of_meeting']);
+				unset($payload['payment_method']);
+				unset($payload['gopay_number']);
+				unset($payload['ovo_number']);
 				$saved = $this->absences->insert_attendance($payload);
 				if($saved) {
 					$response['payload'] = $payload;
@@ -86,5 +103,10 @@ class Absences extends MY_Controller {
 		} else {
 			show_404();
 		}
+	}
+
+	private function get_bank_code($bank_name) {
+		$code = $this->db->select('code')->from('flip_banks')->where('name', $bank_name)->get()->row()->code;
+		return $code;
 	}
 }

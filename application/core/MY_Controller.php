@@ -35,7 +35,11 @@ class MY_Controller extends CI_Controller
     
     function generate_link() {
         $id = $this->db->select('id')->from('absences')->order_by('id', 'desc')->get()->row()->id;
-        $id += 1;
+        if(!$id) {
+            $id = 1;
+        } else {
+            $id += 1;
+        }
         $link = encrypt($id);
         $link = substr($link,0,5) . now();
         return $link;

@@ -440,22 +440,11 @@
 								}, {
 									targets: 'payment-col',
 									render: function (data, _, row) {
-										const ovo = row[11]
-										const gopay = row[12]
 										const bank_name = row[13]
 										const bank_number = row[14]
-										let text = 'OVO'
-										let number = ovo
-										if (row[5] == '2') {
-											text = 'GOPAY'
-											number = gopay
-										} else if (row[5] == '3') {
-											text = 'Bank ' + bank_name
-											number = bank_number
-										}
 										return `<div style="width: 80px !important;">
-													<p class="mb-1 fw-bold fs-7">${text}</p>
-													<p>${number}</p>
+													<p class="mb-1 fw-bold fs-7">${bank_name}</p>
+													<p>${bank_number}</p>
 												</div>`
 									}
 								}, {

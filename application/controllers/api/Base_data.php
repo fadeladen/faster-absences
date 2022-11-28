@@ -71,4 +71,21 @@ class Base_data extends MY_Controller {
         $response['result'] = $this->db->get()->result();
         $this->send_json($response);
     }
+
+    function get_banks() {
+        $this->db
+        ->from('flip_banks');
+
+        if ($this->input->get('select2')) {
+            $this->db->select('name as id, name as text');
+        }
+        if ($this->input->get('q')) {
+            $this->db->like('name', $this->input->get('q'));
+        }
+
+        $this->db->order_by('name', 'asc');
+
+        $response['result'] = $this->db->get()->result();
+        $this->send_json($response);
+    }
 }

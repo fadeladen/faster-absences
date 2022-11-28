@@ -34,11 +34,6 @@ class Absences extends MY_Controller {
         $this->template->render('absences/detail', $data);
 	}
 
-    public function data() {
-		$this->template->set('page', 'Internet, local transport & fee');
-        $this->template->render('absences/data');
-	}
-
     public function create() {
         if ($this->input->is_ajax_request()) {
 			$data['activity_code'] = $this->input->get('activity_code');
@@ -328,9 +323,40 @@ class Absences extends MY_Controller {
         }
     }
 
-    public function test($code) {
-        $data = $this->absences->get_total_submitted_advance($code);
-        echo json_encode($data);
+    public function test_flip() {
+        $ch = curl_init();
+        $secret_key = "JDJ5JDEzJGR1T0JsU3R2a2lERHJFdWtnWkEvTi5yOEw1NS5EU3VyNUZHZHZONWpZbERIYzJQaWx5d3c2";
+        $timestamp = date('c', time());
+        $idom = time();
+        curl_setopt($ch, CURLOPT_URL, "https://bigflip.id/big_sandbox_api/v2/disbursement");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+
+        $payloads = [
+            "account_number" => "1122333300",
+            "bank_code" => "gopay",
+            "amount" => "60000",
+            "remark" => "userId",
+            "recipient_city" => "391",
+            "beneficiary_email" => "test@mail.com"
+        ];
+
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($payloads));
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        "Content-Type: application/x-www-form-urlencoded",
+        "idempotency-key: $idom",
+        "X-TIMESTAMP: $timestamp"
+        ));
+
+        curl_setopt($ch, CURLOPT_USERPWD, $secret_key.":");
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        echo $response;
     }
 
 }
