@@ -39,8 +39,8 @@ class Absences extends MY_Controller {
             $this->form_validation->set_rules('phone_number', 'No HP/WhatsApp', 'required');
             $this->form_validation->set_rules('email_peserta', 'Email peserta', 'required');
             $this->form_validation->set_rules('jumlah_konsumsi', 'Jumlah konsumsi', 'required');
-            $this->form_validation->set_rules('resi_konsumsi', 'Resi', 'required');
             $this->form_validation->set_rules('payment_method', 'Proses reimbursement', 'required');
+            // $this->form_validation->set_rules('resi_konsumsi', 'Resi', 'required');
 			$this->form_validation->set_message('required', '{field} harus diisi.');
 			$payment_method = $this->input->post('payment_method');
 			if($payment_method == '3') {
@@ -76,10 +76,8 @@ class Absences extends MY_Controller {
 				$payload['bank_number'] = $bank_number;
 				$payload['bank_name'] = $bank_name;
 				$payload['bank_code'] = $this->get_bank_code($bank_name);
+				$payload['idempotency_key'] = strtoupper(substr(encrypt(now()), 0, 8));
 				unset($payload['kind_of_meeting']);
-				unset($payload['payment_method']);
-				unset($payload['gopay_number']);
-				unset($payload['ovo_number']);
 				$saved = $this->absences->insert_attendance($payload);
 				if($saved) {
 					$response['payload'] = $payload;

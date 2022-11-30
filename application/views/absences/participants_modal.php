@@ -31,6 +31,7 @@
 						<th style="text-align: center;" colspan='4'>Reimbursement</th>
 						<th class="consumption-receipt" rowspan='2'>Receipt</th>
 						<th class="transfer-receipt" rowspan='2'>Transfer Receipt</th>
+						<th class="flip-status-col" rowspan='2'>Flip Status</th>
 						<th class="action-col" rowspan='2'>Action</th>
 					</tr>
 					<tr>

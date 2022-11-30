@@ -413,7 +413,7 @@
 											<p>
 												Kami sudah melakukan pembayaran penggantian untuk makan
 												siang & internet anda pada kegiatan <b><?= $detail['activity'] ?></b> sebesar <b>Rp. <?= $detail['total'] ?></b>
-												ke akun <b> <?= $detail['payment_method'] ?> <?= ($detail['payment_method'] == 'Bank' ? $detail['bank_name'] : '') ?> </b> anda.
+												ke akun <b> <?= $detail['bank_name'] ?> </b> anda.
 											</p>
 											<div class="button-container">
 												<div>

@@ -75,16 +75,17 @@ class Absences extends MY_Controller {
 
     public function participants_datatable($absence_id)
     {
-        $this->datatable->select('id, nama_peserta, (
+        $this->datatable->select('ap.id, ap.nama_peserta, (
             CASE 
-                WHEN jenis_kelamin = "1" THEN "Male"
-                WHEN jenis_kelamin = "2" THEN "Female"
+                WHEN ap.jenis_kelamin = "1" THEN "Male"
+                WHEN ap.jenis_kelamin = "2" THEN "Female"
                 ELSE "Transgender"
-            END) AS jenis_kelamin, asal_layanan,email_peserta,
-        payment_method, format(jumlah_konsumsi, 0, "de_DE") as jumlah_konsumsi, format(jumlah_internet, 0, "de_DE") as internet_fee,
-        format(jumlah_other, 0, "de_DE") as other_fee, format(jumlah_konsumsi+jumlah_internet+jumlah_other, 0, "de_DE")  as total, 
-        resi_konsumsi, ovo_number, gopay_number, bank_name, bank_number, transfer_receipt, phone_number, nama_lembaga, id as input, is_email_send, absence_id');
-        $this->datatable->from('absence_participants');
+            END) AS jenis_kelamin, ap.asal_layanan, ap.email_peserta,
+        ap.payment_method, format(ap.jumlah_konsumsi, 0, "de_DE") as jumlah_konsumsi, format(ap.jumlah_internet, 0, "de_DE") as internet_fee,
+        format(ap.jumlah_other, 0, "de_DE") as other_fee, format(ap.jumlah_konsumsi+ap.jumlah_internet+ap.jumlah_other, 0, "de_DE")  as total, 
+        ap.resi_konsumsi, ap.ovo_number, ap.gopay_number, ap.bank_name, ap.bank_number, ap.transfer_receipt, ap.phone_number, ap.nama_lembaga, ap.id as input, ap.is_email_send, ap.absence_id, fp.status as flip_status');
+        $this->datatable->from('absence_participants ap');
+        $this->datatable->join('absences_flip_payment fp', 'fp.id = ap.flip_id', 'LEFT');
         $this->datatable->where('absence_id', $absence_id);
         echo $this->datatable->generate();
     }
@@ -323,40 +324,59 @@ class Absences extends MY_Controller {
         }
     }
 
-    public function test_flip() {
-        $ch = curl_init();
-        $secret_key = "JDJ5JDEzJGR1T0JsU3R2a2lERHJFdWtnWkEvTi5yOEw1NS5EU3VyNUZHZHZONWpZbERIYzJQaWx5d3c2";
-        $timestamp = date('c', time());
-        $idom = time();
-        curl_setopt($ch, CURLOPT_URL, "https://bigflip.id/big_sandbox_api/v2/disbursement");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    public function flip_payment($participant_id) {
+        if ($this->input->server('REQUEST_METHOD') === 'POST') {
+            $ch = curl_init();
+            $secret_key = $_ENV['FLIP_SECRET'];
+            $timestamp = date('c', time());
+            $detail = $this->db->select('nama_peserta, email_peserta, bank_code, bank_number, (jumlah_konsumsi+jumlah_internet+jumlah_other) as amount, idempotency_key')
+            ->from('absence_participants')->where('id', $participant_id)->get()->row_array();
+            $idom = $detail['idempotency_key'];
+            curl_setopt($ch, CURLOPT_URL, "https://bigflip.id/big_sandbox_api/v2/disbursement");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+            curl_setopt($ch, CURLOPT_HEADER, FALSE);
+            curl_setopt($ch, CURLOPT_POST, TRUE);
 
-        curl_setopt($ch, CURLOPT_POST, TRUE);
+            $payloads = [
+                "account_number" => $detail['bank_number'],
+                "bank_code" => $detail['bank_code'],
+                "amount" => $detail['amount'] + 0,
+                "remark" => "Absensi",
+                "beneficiary_email" => $detail['email_peserta'],
+            ];
 
-        $payloads = [
-            "account_number" => "1122333300",
-            "bank_code" => "gopay",
-            "amount" => "60000",
-            "remark" => "userId",
-            "recipient_city" => "391",
-            "beneficiary_email" => "test@mail.com"
-        ];
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($payloads));
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($payloads));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            "Content-Type: application/x-www-form-urlencoded",
+            "idempotency-key: $idom",
+            "X-TIMESTAMP: $timestamp"
+            ));
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        "Content-Type: application/x-www-form-urlencoded",
-        "idempotency-key: $idom",
-        "X-TIMESTAMP: $timestamp"
-        ));
-
-        curl_setopt($ch, CURLOPT_USERPWD, $secret_key.":");
-
-        $response = curl_exec($ch);
-        curl_close($ch);
-
-        echo $response;
+            curl_setopt($ch, CURLOPT_USERPWD, $secret_key.":");
+            $res = curl_exec($ch);
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            if($httpcode == 200) {
+                $payload = json_decode($res);
+                $saved = $this->absences->save_flip_payment($participant_id, $payload);
+                if($saved) {
+                    $response['payload'] = $payload;
+                    $response['success'] = true;
+                    $response['message'] = 'Payment in process!';
+                    $status_code = 200;
+                } else {
+                    $response['message'] = 'Something wrong, please try again later!';
+                    $status_code = 400;
+                }
+            } else {
+                $response['message'] = 'Something wrong, please try again later!';
+                $status_code = 400;
+            }
+            $this->send_json($response, $status_code);
+         } else {
+            show_404();
+         }
     }
 
 }

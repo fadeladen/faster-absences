@@ -145,4 +145,17 @@ class Absences_Model extends CI_Model
         }
         return false;
     }
+
+    function save_flip_payment($participant_id, $payload) {
+        $this->db->trans_start();
+        $this->db->insert('absences_flip_payment', $payload);
+        $this->db->where('id', $participant_id)->update('absence_participants', [
+            'flip_id' => $payload->id,
+        ]);
+        $this->db->trans_complete();
+        if($this->db->trans_status()) {
+            return true;
+        }
+        return false;
+    }
 }

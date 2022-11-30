@@ -496,14 +496,14 @@
 										const receipt = row[15]
 										let receiptDetail = ''
 										let uploadBtn = 'd-none'
-										if (!receipt || receipt == '' || receipt ==
-											null) {
+										let url = `<?= $_ENV['ASSETS_URL'] ?>${row[15]}?subfolder=transfer_receipt&token=<?= $_ENV['ASSETS_TOKEN'] ?>`
+										if (!receipt || receipt == '' || receipt == null) {
 											uploadBtn = ''
 											receiptDetail = 'd-none'
 										}
 										return `<div style="width: 95px !important;" class="d-flex flex-column">
                                         <div class="transfer-receipt-container ${receiptDetail}">
-                                            <a href="<?= $_ENV['ASSETS_URL'] ?>${row[15]}?subfolder=transfer_receipt&token=<?= $_ENV['ASSETS_TOKEN'] ?>" target="_blank" class="link-primary d-flex align-items-center transfer-receipt-image">
+                                            <a href="${url}" target="_blank" class="link-primary d-flex align-items-center transfer-receipt-image">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-file-earmark-image" viewBox="0 0 16 16">
                                                     <path d="M6.502 7a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
                                                     <path d="M14 14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5V14zM4 1a1 1 0 0 0-1 1v10l2.224-2.224a.5.5 0 0 1 .61-.075L8 11l2.157-3.02a.5.5 0 0 1 .76-.063L13 10V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4z"/>
@@ -528,21 +528,36 @@
                                         </div>
 								</div>`
 									}
-								},
-								{
+								},{
 									targets: 'action-col',
 									orderable: false,
 									searchable: false,
 									render: function (data, _, row) {
-										let disabled = ''
+										console.log(row[19])
+										let disabled = flipbtn = ''
 										if (row[19] == 1 || row[15] == null || row[10] ==
 											null || !row[10 || !row[15]]) {
 											disabled = 'disabled'
 										}
+										if(row[21] != null) {
+											flipbtn = 'disabled'
+										}
 										return `
-							   <div style="width: 60px !important;" class="d-flex align-items-center"> 
-									<button ${disabled} data-id="${row[18]}" class="btn btn-xs btn-primary btn-send-email">Submit</button>
-							   </div>`
+											<div style="width: 60px !important;" class="d-flex flex-column align-items-center"> 
+													<button ${disabled} data-id="${row[18]}" class="btn btn-xs btn-primary btn-send-email">Submit</button>
+													<button ${flipbtn}  data-id="${row[18]}" class="btn btn-xs btn-danger btn-flip mt-1">Flip</button>
+											</div>`
+									}
+								}, {
+									targets: 'flip-status-col',
+									orderable: false,
+									searchable: false,
+									render: function (data, _, row) {
+										let flipStatus = row[21]
+										if(flipStatus == null) {
+											flipStatus = '-'
+										}
+										return `<div class="text-gray-800">${flipStatus}</div>`
 									}
 								}
 							]
@@ -735,6 +750,63 @@
 										type: 'POST',
 										url: base_url +
 											'absences/submit_participant_reimbursement/' +
+											id,
+										beforeSend: function () {
+											Swal.fire({
+												html: loader,
+												showConfirmButton: false,
+												allowEscapeKey: false,
+												allowOutsideClick: false,
+											});
+										},
+										error: function (xhr) {
+											const response = xhr.responseJSON;
+											Swal.fire({
+												"title": response
+													.message,
+												"text": '',
+												"icon": "error",
+												"confirmButtonColor": '#000',
+											});
+										},
+										success: function (response) {
+											Swal.fire({
+												"title": "Success!",
+												"text": response
+													.message,
+												"icon": "success",
+												"confirmButtonColor": '#000',
+											}).then((result) => {
+												if (result.value) {
+													participantsTable
+														.draw(false)
+												}
+											})
+										},
+									});
+								}
+							})
+						})
+						$(document).on("click", '.btn-flip', function () {
+							const $this = $(this)
+							const id = $(this).attr('data-id')
+							const loader = `<div style="width: 5rem; height: 5rem;" class="spinner-border mb-5" role="status"></div>
+							<h5 class="mt-2">Please wait</h5>
+							<p>Sending...</p>`
+							Swal.fire({
+								title: `Send payment with Flip?`,
+								text: "",
+								icon: 'warning',
+								showCancelButton: true,
+								confirmButtonColor: '#009EF7',
+								cancelButtonColor: '#F1416C',
+								confirmButtonText: `Yes!`
+							}).then((result) => {
+								if (result.value) {
+									$.ajax({
+										type: 'POST',
+										url: base_url +
+											'absences/flip_payment/' +
 											id,
 										beforeSend: function () {
 											Swal.fire({
