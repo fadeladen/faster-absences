@@ -13,7 +13,7 @@
 									<h3 class="card-title align-items-start flex-column">
 										<span
 											class="card-label fw-bolder fs-3 mb-1"><?= $detail['kode_kegiatan'] ?></span>
-										<span class="text-muted mt-1 fw-bold fs-7">
+										<span style="max-width: 400px;" class="text-muted mt-1 fw-bold fs-7">
 											<?= $detail['activity'] ?>
 										</span>
 									</h3>
@@ -364,6 +364,7 @@
 			}
 			$(document).on('click', '.btn-participants', function (e) {
 				const absence_id = $(this).attr('data-id')
+				console.log(absence_id)
 				$.get(base_url +
 					`absences/participants_modal?absence_id=${absence_id}`,
 					function (html) {

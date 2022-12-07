@@ -60,12 +60,25 @@ class Absences extends MY_Controller {
 
 	public function datatable()
     {	
-        $this->datatable->select('pn.advance_number, u.username, DATE_FORMAT(pn.tor_approve_date, "%d %M %Y"), dm.activity, dm.kode_kegiatan as action, pn.tor_number,
+        $program_assistance_df_number = ["1"];
+
+		if ($this->user_data->roles === 'OPERATION') {
+			$program_assistance = $this->db->get_where('tb_program_assistance', [
+				'user_id' => $this->user_data->userId
+			])->result();
+
+			foreach($program_assistance as $pa) {
+				$program_assistance_df_number[] = $pa->direct_fund_code;
+			}
+
+		}
+        $this->datatable->select('pn.advance_number, u.username, DATE_FORMAT(pn.tor_approve_date, "%d %M %Y") as approve_date, dm.activity, dm.kode_kegiatan as action, pn.tor_number,
         dm.kode_kegiatan, u.avatar, u.purpose, un.unit_name');
         $this->datatable->from('tb_mini_proposal_new pn');
         $this->datatable->join('tb_userapp u', 'u.id = pn.create_by');
         $this->datatable->join('tb_units un', 'u.unit_id = un.id');
         $this->datatable->join('tb_detail_monthly dm', 'dm.kode_kegiatan = pn.code_activity');
+        $this->datatable->join('absences abs', 'dm.kode_kegiatan = abs.code_activity');
         $this->datatable->where('pn.status_finance', '1');
         // $this->datatable->where_in('pn.direct_fund_code', $program_assistance_df_number);
         // $this->datatable->where("dm.year = '".date('Y')."' and (dm.month IN('" . date('n') . "','" . (date('n') + 1) . "') OR dm.month_postponse IN('" . date('n') . "','" . (date('n') + 1) . "') )");
@@ -378,5 +391,71 @@ class Absences extends MY_Controller {
             show_404();
          }
     }
+
+    // public function insert_old_data() {
+    //     $data = $this->db->select('a.*, d.create_date as created_at')->from('tb_event_absence a')
+    //     ->join('tb_detail_monthly d', 'd.kode_kegiatan = a.code_activity', 'LEFT')
+    //     ->group_by('code_activity')
+    //     ->get()->result_array();
+    //     foreach($data as $event) {
+    //         $this->db->insert('absences',[
+    //             'code_activity' => $event['code_activity'],
+    //             'session_title' => 'Sesi 1',
+    //             'kind_of_meeting' => 1,
+    //             'valid_when' => $event['created_at'],
+    //             'valid_until' => $event['created_at'],
+    //             'created_at' => $event['created_at'],
+    //             'kind_of_meeting' => 1,
+    //             'attendance_link' =>  $this->generate_link()
+    //         ]);
+    //         $absence_id =  $this->db->insert_id();
+    //         $participants = $this->db->select('a.*, d.create_date as created_at')->from('tb_event_absence a')
+    //         ->join('tb_detail_monthly d', 'd.kode_kegiatan = a.code_activity', 'LEFT')
+    //         ->where('code_activity', $event['code_activity'])
+    //         ->get()->result_array();
+    //         foreach($participants as $participant) {
+    //             $bank_number = $participant['bank_number'];
+    //             $bank_name = $participant['bank_name'];
+    //             $payment_method = 3;
+    //             $bank_code = '';
+    //             if($participant['ovo_number'] != '') {
+    //                 $bank_number = $participant['ovo_number'];
+    //                 $bank_name = 'OVO';
+    //                 $bank_code= 'ovo';
+    //                 $payment_method = 1;
+    //             } else if($participant['gopay_number'] != '') {
+    //                 $bank_number = $participant['gopay_number'];
+    //                 $bank_name = 'GoPay';
+    //                 $payment_method = 2;
+    //                 $bank_code= 'gopay';
+    //             }
+    //             $saved = $this->db->insert('absence_participants',[
+    //                 'absence_id' => $absence_id,
+    //                 'tujuan_pengisian' => 2,
+    //                 'nama_peserta' => $participant['nama_peserta'],
+    //                 'jenis_kelamin' => $participant['jenis_kelamin'],
+    //                 'asal_layanan' => $participant['asal_layanan'],
+    //                 'email_peserta' => $participant['email_peserta'],
+    //                 'nama_lembaga' => $participant['nama_lembaga'],
+    //                 'resi_konsumsi' => $participant['resi_konsumsi'],
+    //                 'phone_number' => $participant['phone_number'],
+    //                 'is_email_send' => $participant['is_email_send'],
+    //                 'jumlah_konsumsi' => $participant['jumlah_reimburesment'],
+    //                 'jumlah_internet' => $participant['jumlah_internet'],
+    //                 'jumlah_other' => $participant['jumlah_other'],
+    //                 'payment_method' => $payment_method,
+    //                 'bank_name' => $bank_name,
+    //                 'bank_number' => $bank_number,
+    //                 'bank_code' => $bank_code,
+    //                 'is_old_data' => 1,
+    //             ]);
+    //         }
+    //     }
+    //     if($saved) {
+    //         echo 'saved';
+    //     } else {
+    //         echo "fail";
+    //     }
+    // }
 
 }

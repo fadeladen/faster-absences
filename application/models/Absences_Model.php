@@ -38,8 +38,8 @@ class Absences_Model extends CI_Model
         ->from('absences a')
         ->join('tb_detail_monthly dm', 'dm.kode_kegiatan = a.code_activity')
         ->join('tb_mini_proposal_new mp', 'a.code_activity = mp.code_activity')
-        ->join('tb_userapp u', 'a.created_by = u.id')
-        ->join('tb_userapp rq', 'mp.create_by = rq.id')
+        ->join('tb_userapp u', 'a.created_by = u.id', 'LEFT')
+        ->join('tb_userapp rq', 'mp.create_by = rq.id', 'LEFT')
         ->where('a.id', $id)->get()->row_array();
     }
 

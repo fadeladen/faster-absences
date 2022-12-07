@@ -37,7 +37,7 @@
 											<th class="numbers-col">Request numbers</th>
 											<th class="requestor">Requestor</th>
 											<th>Date of Approval</th>
-											<th>Activity</th>
+											<th style="width: 300px;">Activity</th>
 											<th class="action-col">Action</th>
 										</tr>
 										<!--end::Table head-->
@@ -60,9 +60,13 @@
 	<script>
 		const table = initDatatable('#table', {
 			order: [
-				[0, 'desc']
+				[4, 'asc']
 			],
 			columnDefs: [{
+				targets: [2],
+				orderable: true,
+				searchable: false,
+			}, {
 				targets: 'action-col',
 				orderable: false,
 				searchable: false,
@@ -78,10 +82,10 @@
 	                   </div>
 	                `
 				}
-			},{
+			}, {
 				targets: 'numbers-col',
 				orderable: false,
-				searchable: false,
+				searchable: true,
 				render: function (data, _, row) {
 					return `
 	                   <div class="d-flex flex-column"> 
@@ -96,24 +100,12 @@
 				orderable: false,
 				searchable: true,
 				render: function (data, _, row) {
-					let avatar = ''
-					if (row[7] == null) {
-						avatar = base_url + 'assets/images/no-avatar.png'
-					} else {
-						const asset_token = "<?= $_ENV['ASSETS_TOKEN']; ?>"
-						const asset_url = "<?= $_ENV['ASSETS_URL']; ?>"
-						avatar = asset_url + row[7] + '?subfolder=avatars&token=' + asset_token
-					}
 					return `<div class="d-flex align-items-center">
-								<img style="width: 4rem !important; height: 4rem !important; border-radius: 50% !important; object-fit: cover !important;"
-									class="img-fluid me-5"
-									src="${avatar}"
-									alt="">
 								<div>
 									<div class="fw-bolder text-gray-800 fs-5">
 										${data}
 									</div>
-									<div style="font-size: 12px; !important" class="text-gray-600 d-flex flex-column">
+									<div style="font-size: 16px; !important" class="text-gray-600 d-flex flex-column">
 										<small>
 										${row[8]}
 										</small>

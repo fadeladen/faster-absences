@@ -14,7 +14,7 @@ class Documents extends MY_Controller {
 
 	public function participants_list_by_session($absence_id)
     {
-        $absence_id = decrypt($absence_id);
+        // $absence_id = decrypt($absence_id);
 
         $detail = $this->absences->get_absences_by_id($absence_id);
         $participants = $this->absences->get_participants_by_id($absence_id);
@@ -22,9 +22,10 @@ class Documents extends MY_Controller {
             'detail' => $detail,
             'participants' => $participants,
         ];
+        // echo json_encode($data);
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-        $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'en', true, 'UTF-8', array(5, 5, 5, 5));
+        $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('L', 'A4', 'en', true, 'UTF-8', array(5, 5, 5, 5));
 		$html = $this->load->view('template/participant_lists', $data, TRUE);
 		$html2pdf->setTestTdInOnePage(false);
         $html2pdf->setDefaultFont('arial');

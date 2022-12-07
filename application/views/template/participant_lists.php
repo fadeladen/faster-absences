@@ -52,8 +52,8 @@
 		</tr>
 		<?php $no = 1; foreach($participants as $par): ?>
 		<tr style="background: #e8e8e8">
-			<td style="text-align: center"><?= $no++ ?></td>
-			<td>
+			<td style="text-align: center; width: 5%;"><?= $no++ ?></td>
+			<td style="width: 20%;">
 				<p style="margin: 0; margin-bottom: 3px;">
 					<?= $par->nama_peserta ?>
 				</p>
@@ -61,42 +61,24 @@
 					<?= $par->jenis_kelamin ?>
 				</p>
 			</td>
-			<td>
+			<td style="width: 25%;">
 				<p style="margin: 0; margin-bottom: 3px;">
 					<?= $par->asal_layanan ?>
 				</p>
-				<p style="margin: 0;">
+				<p style="margin: 0; word-wrap: break-word;">
 					<?= $par->nama_lembaga ?>
 				</p>
 			</td>
-			<td><?= $par->email_peserta ?></td>
-			<td>
-				<?php if ($par->payment_method == 1): ?>
+			<td style="width: 20%;"><?= $par->email_peserta ?></td>
+			<td style="width: 15%;">
 				<p style="margin: 0; margin-bottom: 2px;">
-					OVO
-				</p>
-				<p style="margin: 0;">
-					<?= $par->ovo_number ?>
-				</p>
-				<?php elseif ($par->payment_method == 2): ?>
-				<p style="margin: 0; margin-bottom: 2px;">
-					GOPAY
-				</p>
-				<p style="margin: 0;">
-					<?= $par->gopay_number ?>
-				</p>
-				<?php else: ?>
-
-				<p style="margin: 0; margin-bottom: 2px;">
-					Bank <?= $par->bank_name ?>
+					<?= $par->bank_name ?>
 				</p>
 				<p style="margin: 0;">
 					<?= $par->bank_number ?>
 				</p>
-
-				<?php endif; ?>
 			</td>
-			<td style="text-align: right"><?= $par->total ?></td>
+			<td style="text-align: right; width: 15%;"><?= $par->total ?></td>
 		</tr>
 		<tr>
 			<td colspan="6">
@@ -108,12 +90,6 @@
 							<table class="table-no-border">
 								<tr>
 									<td style="width: 100%;">
-										<?php if ($par->resi_konsumsi != NULL): ?>
-											<img style="max-width: 350px; max-height: 200px;"
-												src="<?= $_ENV['ASSETS_URL'] . $par->resi_konsumsi . '?subfolder=resi_konsumsi&token=' .  $_ENV['ASSETS_TOKEN'] ?>">
-										<?php endif; ?>
-										<!-- <img style="max-width: 350px; max-height: 200px;"
-											src="<?= base_url('assets/images/sample1.jpg') ?>"> -->
 									</td>
 								</tr>
 								<br>
@@ -125,12 +101,6 @@
 							<table class="table-no-border">
 								<tr>
 									<td style="width: 100%;">
-										<?php if ($par->transfer_receipt != NULL): ?>
-												<img style="max-width: 300px; max-height: 200px;"
-													src="<?= $_ENV['ASSETS_URL'] . $par->transfer_receipt . '?subfolder=transfer_receipt&token=' .  $_ENV['ASSETS_TOKEN'] ?>">
-										<?php endif; ?>
-										<!-- <img style="max-width: 350px; max-height: 200px;"
-											src="<?= base_url('assets/images/sample2.jpg') ?>"> -->
 									</td>
 								</tr>
 								<br>
